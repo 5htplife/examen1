@@ -9,6 +9,8 @@ import os
 import plotly.express as px
 from scipy import stats
 
+with st.echo(code_location="below"):
+
 @st.cache
 def get_kcal():
     return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/Food_Supply_kcal_Data.csv")
