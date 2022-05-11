@@ -1,7 +1,7 @@
 import streamlit as st
+import seaborn as sns
 import pandas as pd
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 import altair as alt
 import glob
@@ -27,7 +27,7 @@ kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed'] #I find mortali
 st.markdown('# COVID-19, Obesity and Food Habits')
 st.write("The coronavirus pandemic incentivized many people to reassess their lifestyle habits, including their consumption.")
 st.write("This project aims to offer a substantial insight in aggregate food habits of people in countries all over the globe.")
-st.write("## Data concerning COVID situation in the world")
+st.write("## COVID situation in the world")
 st.write("The map shows COVID-19 situation in the world based on confirmed cases")
 kcal_adj_merged=kcal_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
 fig_general=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
@@ -190,13 +190,13 @@ st.write('Last but not least, I want to analyze the gender patterns concerning o
 obesity_data_mean = obesity_data_adj.groupby(['Year', 'Sex']).mean().reset_index(level='Sex').reset_index(level='Year')
 obesity_data_mean_adj = obesity_data_mean[obesity_data_mean['Sex'] != 'Both sexes'].drop(columns = obesity_data_mean.columns[2])
 fig8, ax8 = plt.subplots()
-sns.set_style('whitegrid', {'axes.grid':False})
-fig8 = sns.displot(data=obesity_data_mean_adj, x='Year', y='Obesity (%)', hue = 'Sex',
-                   kind="kde", palette="ch:rot=.2,rot=.6,hue=1,light=.75",
-)
-sns.move_legend(fig8, 'center right', bbox_to_anchor=(1, .25), title=None)
-fig8.set(ylabel='Average Obesity Rate (%), World')
+sns.scatterplot(data=obesity_data_mean_adj, x='Year', y='Obesity (%)', hue = 'Sex',
+                palette="ch:rot=.2,rot=.6,hue=1,light=.75",
+                style = 'Sex', markers=['^', 'v'], ax=ax8)
+ax8.set(ylabel='Obesity Rate, Average (%)')
+ax8.legend(loc='center right', bbox_to_anchor=(1, .25), title=None)
+ax8.set_title('The Average Obesity Rate by Gender (1975-2016)')
 st.pyplot(fig8)
 st.write('This finding may contribute to the answer as to why women are more into dieting than men are.')
 st.write('Anyway, I hope this project was helpful and gave you some insights about health!')
-st.write('## An ounce of prevention is worth a pound of cure')
+st.write('### An ounce of prevention is worth a pound of cure')
