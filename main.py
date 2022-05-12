@@ -8,8 +8,16 @@ import glob
 import os
 import plotly.express as px
 from scipy import stats
+import datetime
+
 
 with st.echo(code_location="below"):
+    st.set_page_config(
+        page_title="Ex-stream-ly Cool App",
+        page_icon="🧊",
+        layout="centered",
+        initial_sidebar_state="auto"
+    )
     @st.cache
     def get_kcal():
         return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/Food_Supply_kcal_Data.csv")
@@ -36,49 +44,50 @@ with st.echo(code_location="below"):
                          projection='natural earth', title='COVID-19 Situation In the World')
     st.plotly_chart(fig_general)
     kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed']
-    covid_options = st.selectbox('What would you like to see first?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'], key='1')
-    if not st.sidebar.checkbox("Hide", True, key='1'):
-        if covid_options == 'COVID Mortality Rate':
-            kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
-            fig_bar_mortality = px.bar(kcal_adj_sorted, x='Country', y='Mortality', title='COVID Mortality by Country', labels={'Mortality':'Mortality Rate (%)'}, height=400)
-            st.plotly_chart(fig_bar_mortality)
-        elif covid_options == 'Confirmed Cases':
-            kcal_adj_sorted = kcal_adj.sort_values(by='Confirmed', ascending=False)
-            fig_bar_confirmed = px.bar(kcal_adj_sorted, x='Country', y='Confirmed', hover_data=['Confirmed'], color='Confirmed',
-                                       title='COVID Confirmed Cases by Country', labels={'Confirmed': 'Confirmed COVID-19 Cases (%)'})
-            st.plotly_chart(fig_bar_confirmed)
-        else:
-            kcal_adj_sorted = kcal_adj.sort_values(by='Deaths', ascending=False)
-            fig_bar_deaths = px.bar(kcal_adj_sorted, x='Country', y='Deaths', hover_data=['Deaths'], color='Deaths',
-                                    title='COVID Deaths by Country', labels={'Deaths': 'Death Rate (%)'})
-            st.plotly_chart(fig_bar_deaths)
+    covid_options = st.selectbox('What would you like to see first?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
+    if covid_options == 'COVID Mortality Rate':
+        kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
+        fig_bar_mortality = px.bar(kcal_adj_sorted, x='Country', y='Mortality', title='COVID Mortality by Country',
+                                   labels={'Mortality': 'Mortality Rate (%)'}, height=400)
+        st.plotly_chart(fig_bar_mortality)
+    elif covid_options == 'Confirmed Cases':
+        kcal_adj_sorted = kcal_adj.sort_values(by='Confirmed', ascending=False)
+        fig_bar_confirmed = px.bar(kcal_adj_sorted, x='Country', y='Confirmed', hover_data=['Confirmed'],
+                                   color='Confirmed',
+                                   title='COVID Confirmed Cases by Country',
+                                   labels={'Confirmed': 'Confirmed COVID-19 Cases (%)'})
+        st.plotly_chart(fig_bar_confirmed)
+    else:
+        kcal_adj_sorted = kcal_adj.sort_values(by='Deaths', ascending=False)
+        fig_bar_deaths = px.bar(kcal_adj_sorted, x='Country', y='Deaths', hover_data=['Deaths'], color='Deaths',
+                                title='COVID Deaths by Country', labels={'Deaths': 'Death Rate (%)'})
+        st.plotly_chart(fig_bar_deaths)
     st.write("## Obesity and Coronavirus")
     st.write("Let's look how obesity and COVID-19 are correlated around the globe")
     kcal_covid = kcal_adj[['Obesity','Deaths', 'Confirmed', 'Mortality']]
-    obesity_covid_correlation_options = st.selectbox('How do you prefer to view correlation?', ['Heatmap, please', 'I prefer multiple plots'], key='2')
-    if not st.sidebar.checkbox("Hide", True, key='2'):
-        if obesity_covid_correlation_options == 'I prefer multiple plots':
-            fig1, ax1 = plt.subplots()
-            sns.regplot(data = kcal_adj, x='Obesity', y='Deaths', color='darkolivegreen', marker = '+', ax=ax1)
-            ax1.set(xlabel='Obesity (%)', ylabel='Death Rate (%)')
-            ax1.set_title('Correlation between Obesity and Death Rate')
-            st.pyplot(fig1)
-            fig2, ax2 = plt.subplots()
-            sns.regplot(data = kcal_adj, x='Obesity', y='Confirmed', color='cadetblue', marker='2', ax=ax2)
-            ax2.set(xlabel='Obesity (%)', ylabel='Confirmed Cases (%)')
-            ax2.set_title('Correlation between Obesity and Confirmed Cases')
-            st.pyplot(fig2)
-            fig3, ax3 = plt.subplots()
-            sns.regplot(data=kcal_adj, x='Obesity', y='Mortality', color='palevioletred', marker='x', ax=ax3)
-            ax3.set(xlabel='Obesity (%)', ylabel='Mortality Rate (%)')
-            ax3.set_title('Correlation between Obesity and Mortality Rate')
-            st.pyplot(fig3)
-        else:
-            corr_covid = kcal_covid.corr(method='pearson')
-            fig4, ax4 = plt.subplots()
-            sns.heatmap(corr_covid, annot=True, cmap = 'cubehelix', linewidths=.5)
-            ax4.set_title('Correlation Matrix for Obesity, Death Rate, Confirmed Cases, and Mortality Rate')
-            st.pyplot(fig4)
+    obesity_covid_correlation_options = st.selectbox('How do you prefer to view correlation?', ['Heatmap, please', 'I prefer multiple plots'])
+    if obesity_covid_correlation_options == 'I prefer multiple plots':
+        fig1, ax1 = plt.subplots()
+        sns.regplot(data=kcal_adj, x='Obesity', y='Deaths', color='darkolivegreen', marker='+', ax=ax1)
+        ax1.set(xlabel='Obesity (%)', ylabel='Death Rate (%)')
+        ax1.set_title('Correlation between Obesity and Death Rate')
+        st.pyplot(fig1)
+        fig2, ax2 = plt.subplots()
+        sns.regplot(data=kcal_adj, x='Obesity', y='Confirmed', color='cadetblue', marker='2', ax=ax2)
+        ax2.set(xlabel='Obesity (%)', ylabel='Confirmed Cases (%)')
+        ax2.set_title('Correlation between Obesity and Confirmed Cases')
+        st.pyplot(fig2)
+        fig3, ax3 = plt.subplots()
+        sns.regplot(data=kcal_adj, x='Obesity', y='Mortality', color='palevioletred', marker='x', ax=ax3)
+        ax3.set(xlabel='Obesity (%)', ylabel='Mortality Rate (%)')
+        ax3.set_title('Correlation between Obesity and Mortality Rate')
+        st.pyplot(fig3)
+    else:
+        corr_covid = kcal_covid.corr(method='pearson')
+        fig4, ax4 = plt.subplots()
+        sns.heatmap(corr_covid, annot=True, cmap='cubehelix', linewidths=.5)
+        ax4.set_title('Correlation Matrix for Obesity, Death Rate, Confirmed Cases, and Mortality Rate')
+        st.pyplot(fig4)
     corr_obesity_death = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Deaths'])[0]
     corr_obesity_confirmed = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Confirmed'])[0]
     corr_obesity_mort = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Mortality'])[0]
@@ -89,15 +98,18 @@ with st.echo(code_location="below"):
     st.write('## Food Habits')
     st.write('You may want to see the dietary habits of particular countries.')
     countries = kcal_adj['Country']
-    country_options = st.selectbox('Choose a country', countries, key='3')
-    if not st.sidebar.checkbox("Hide", True, key='3'):
-        country=kcal_adj[kcal_adj['Country']==country_options]
-        country1 = country.drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products'])
-        country2=country1.columns
-        country1=country1.T
-        country1.columns=["food"]
-        fig_nutrition_each_country = px.pie(country1, values='food', color = 'food', hover_name = 'food', names=country2, labels={'index': 'Type of Food', 'food':'Per cent of Calorie Intake'}, title='Food Habits in the Country')
-        st.plotly_chart(fig_nutrition_each_country)
+    country_options = st.selectbox('Choose a country', countries)
+    country = kcal_adj[kcal_adj['Country'] == country_options]
+    country1 = country.drop(
+        columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality',
+                 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products'])
+    country2 = country1.columns
+    country1 = country1.T
+    country1.columns = ["food"]
+    fig_nutrition_each_country = px.pie(country1, values='food', color='food', hover_name='food', names=country2,
+                                        labels={'index': 'Type of Food', 'food': 'Per cent of Calorie Intake'},
+                                        title='Food Habits in the Country')
+    st.plotly_chart(fig_nutrition_each_country)
     st.write("It might be interesting to analyze dietary habits of countries with the highest and lowest obesity and COVID-19 death levels. So let's check it")
     meat_products = kcal_adj['Animal fats'] + kcal_adj['Meat'] + kcal_adj['Offals'] #I combine them because it's easier to assess this group together
     seafood = kcal_adj['Aquatic Products, Other'] + kcal_adj['Fish, Seafood'] #I do it for the same reason
@@ -157,13 +169,12 @@ with st.echo(code_location="below"):
         ax6.set_title('Correlation between Obesity and The Chosen Type of Food')
         return st.pyplot(fig6)
     list_of_products = ['Meat Products', 'Fish and Seafood', 'Alcoholic Beverages', 'Cereals - Excluding Beer', 'Eggs', 'Fruits - Excluding Wine', 'Milk - Excluding Butter', 'Pulses', 'Starchy Roots', 'Stimulants', 'Sugar & Sweeteners', 'Vegetables', 'Treenuts']
-    food_options = st.selectbox("Choose a type of food you're interested in", list_of_products, key='4')
-    if not st.sidebar.checkbox("Hide", True, key='4'):
-        for element in list_of_products:
-            if food_options == element:
-                function_for_food_plots(element)
-                correlation_food = stats.pearsonr(kcal_adj_sorted_by_undernourished[element], kcal_adj_sorted_by_undernourished['Obesity'])[0]
-                st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
+    food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
+    for element in list_of_products:
+        if food_options == element:
+            function_for_food_plots(element)
+            correlation_food = stats.pearsonr(kcal_adj_sorted_by_undernourished[element], kcal_adj_sorted_by_undernourished['Obesity'])[0]
+            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
     st.write("Therefore, we can conclude that fish and seafood, cereals (сomplex carbs), beans (pulses) and vegetables positively affect person's health because there is a negative correlation between them and obesity.")
     st.write("## Remark")
     st.write("In the end, I would like to emphasize the importance of maintaining a healthy diet once again.")
@@ -182,7 +193,7 @@ with st.echo(code_location="below"):
     obesity_data_adj = obesity_data_adj.drop(columns=['Obesity'])
     obesity_data_merged = obesity_data_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
     fig_obesity=px.choropleth(obesity_data_merged[obesity_data_merged['Sex'] == 'Both sexes'], locations='alpha-3', color='Obesity (%)',
-                            range_color = (0, 28), hover_name ='Country', hover_data=['Obesity (%)', 'Year'], color_continuous_scale="Purples", animation_frame="Year", projection='equirectangular',
+                            range_color = (0, 28), hover_name ='Country', hover_data=['Obesity (%)', 'Year'], color_continuous_scale=px.colors.diverging.BrBG, animation_frame="Year", projection='equirectangular',
                               animation_group='region', title='The Obesity Rate Around the Globe (1975-2016)', labels={'Obesity (%)': 'Obesity Rate (%)'})
     st.plotly_chart(fig_obesity)
     st.write('As you might notice, the developed world is getting more and more obesed (and Russia is not an exception). Obesity is dangerous because it can lead to serious diseases.')
@@ -190,9 +201,18 @@ with st.echo(code_location="below"):
     st.write('Last but not least, I want to analyze the gender patterns concerning obesity')
     obesity_data_mean = obesity_data_adj.groupby(['Year', 'Sex']).mean().reset_index(level='Sex').reset_index(level='Year')
     obesity_data_mean_adj = obesity_data_mean[obesity_data_mean['Sex'] != 'Both sexes'].drop(columns = obesity_data_mean.columns[2])
+    obesity_data_mean_adj["Year"]=pd.to_datetime(obesity_data_mean_adj["Year"], format="%Y")
     fig8, ax8 = plt.subplots()
+    finalplot = (
+        alt.Chart(obesity_data_mean_adj).mark_circle().encode(
+        x= alt.X('Year',
+                scale=alt.Scale(domain=[1975, 2016])),
+        y=alt.Y('Obesity (%)'),
+        color='Sex').interactive()
+    )
+    st.altair_chart(finalplot.interactive(), use_container_width=True)
     sns.scatterplot(data=obesity_data_mean_adj, x='Year', y='Obesity (%)', hue = 'Sex',
-                    palette="ch:rot=.2,rot=.6,hue=1,light=.75",
+                    palette="Paired",
                     style = 'Sex', markers=['^', 'v'], ax=ax8)
     ax8.set(ylabel='Obesity Rate, Average (%)')
     ax8.legend(loc='center right', bbox_to_anchor=(1, .25), title=None)
