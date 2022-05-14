@@ -133,7 +133,6 @@ with st.echo(code_location="below"):
     low_obesity_rate = (kcal_adj.sort_values('Obesity', ascending=True).head(10)
         .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
                         )
-
     def food_obesity_death(df):
         df1 = df.mean()
         df2 = df1.reset_index(level=0)
