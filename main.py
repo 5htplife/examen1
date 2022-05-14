@@ -12,18 +12,24 @@ import datetime
 
 
 with st.echo(code_location="below"):
-    st.set_page_config(
-        page_title="Ex-stream-ly Cool App",
-        page_icon="🧊",
-        layout="centered",
-        initial_sidebar_state="auto"
-    )
     @st.cache
     def get_kcal():
         return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/Food_Supply_kcal_Data.csv")
     @st.cache
     def get_iso():
         return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/continents2%202.csv")
+    st.set_page_config(
+        page_title="COVID-19, Obesity and Food Habits",
+        page_icon="🧊",
+        layout="centered"
+    )
+    st.sidebar.markdown('''
+    # Contents
+    - [COVID situation in the world](#covid-situation-in-the-world)
+    - [Obesity and Coronavirus](#obesity-and-coronavirus)
+    - [Obesity and Food Habits](#obesity-and-food-habits)
+    - [Remark](#remark)
+    ''', unsafe_allow_html=True)
     kcal = get_kcal()
     iso = get_iso().rename(columns={'name': 'Country'})
     iso_adj = iso.replace({'United States': 'United States of America'
@@ -34,17 +40,17 @@ with st.echo(code_location="below"):
     kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#we don't need units and I drop "Active" because 1) I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
     kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed'] #I find mortality as it is one of the main indicators of COVID situation in the country
     st.markdown('# COVID-19, Obesity and Food Habits')
-    st.write("The coronavirus pandemic incentivized many people to reassess their lifestyle habits, including their consumption.")
-    st.write("This project aims to offer a substantial insight in aggregate food habits of people in countries all over the globe.")
+    st.write("The coronavirus pandemic incentivized many people to reconsider their lifestyle habits, including their consumption habits.")
+    st.write("This project aims to offer an insight in aggregate food habits of people in countries all over the globe.")
     st.write("## COVID situation in the world")
-    st.write("The map shows COVID-19 situation in the world based on confirmed cases")
+    st.write("The map shows COVID-19 situation in the world based on confirmed cases in the middle of 2021.")
     kcal_adj_merged=kcal_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
     fig_general=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
                          hover_name='Country', hover_data = ['Confirmed', 'Deaths', 'Population'], size='Confirmed', labels={'Confirmed': 'Confirmed Cases (%)', 'Deaths': 'Death Rate (%)', 'Mortality': 'Mortality Rate (%)'},
                          projection='natural earth', title='COVID-19 Situation In the World')
     st.plotly_chart(fig_general)
     kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed']
-    covid_options = st.selectbox('What would you like to see first?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
+    covid_options = st.selectbox('What in particular would you like to see?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
     if covid_options == 'COVID Mortality Rate':
         kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
         fig_bar_mortality = px.bar(kcal_adj_sorted, x='Country', y='Mortality', title='COVID Mortality by Country',
@@ -130,37 +136,57 @@ with st.echo(code_location="below"):
     def food_obesity_death(df):
         df1 = df.mean()
         df2 = df1.reset_index(level=0)
-        df2.columns=["type of food", "per cent of daily intake"]
-        high_deaths = alt.Chart(df2).mark_bar().encode(x='per cent of daily intake',
-                                                                               y='type of food', color='type of food')
+        df2.columns=["type of food", "per cent of intake"]
+        high_deaths = alt.Chart(df2).mark_bar().encode(x=alt.X('per cent of intake', scale=alt.Scale(domain=[0,30])),
+                                                                               y='type of food'
+                                                       , color=alt.Color('type of food', scale=alt.Scale(scheme='Category20')))
         return st.altair_chart(high_deaths, use_container_width=True)
-    st.write('We can examine the dietary habits of countries where the death rate is high.')
-    st.write('### Top-10 countries with the highest COVID death rate')
+    st.write('In the following 4 plots I use the average intakes of different types of food in the corresponding groups of countries.')
+    st.write('### Top-10 countries with the highest COVID death rate, Average Food Habits')
     food_obesity_death(high_death_rate)
-    st.write('### Top-10 countries with the lowest COVID death rate')
+    st.write('### Top-10 countries with the lowest COVID death rate,  Average Food Habits')
     food_obesity_death(low_death_rate)
-    st.write("### Top-10 countries with the highest obesity rate")
+    st.write("### Top-10 countries with the highest obesity rate,  Average Food Habits")
     food_obesity_death(high_obesity_rate)
-    st.write('### Top-10 countries with the lowest obesity rate')
+    st.write('### Top-10 countries with the lowest obesity rate,  Average Food Habits')
     food_obesity_death(low_obesity_rate)
-    st.write("It seems that in countries with the least death and obesity rates people consume more cereals, starchy roots and beans (perhaps, healthy carbs), but they consume much less of other types of food, including conventionally unhealthy ones: alcohol, sugar, meat, and dairy")
+    st.write("It seems that in countries with the least death and obesity rates people consume more cereals, starchy roots and beans (perhaps, healthy carbs), and they consume much less of other types of food, including conventionally unhealthy ones: alcohol, sugar, meat, and dairy")
     st.write("## Obesity and Food Habits")
     st.write("The results we've seen are interesting, but in top-10 least obesed countries, there may be a high rate of undernourishment, as well.")
     st.write("Thus, I'll try to limit the effect of this factor by sampling only those countries where the undernourishment rate is below average.")
+    st.write('Although it does not totally reduce the undernourishment effect, it certainly is more representative.')
+    st.write("Also, I use a different type of plot because it may be interesting to analyse not the average numbers but each of top-10 obesed/least obesed country's consumption habits.")
     kcal_adj['Undernourished'] = kcal_adj['Undernourished'].replace('<2.5','2.5')
     kcal_adj['Undernourished'] = kcal_adj["Undernourished"].astype(float)
     kcal_adj_sorted_by_undernourished = kcal_adj[kcal_adj['Undernourished'] < kcal_adj['Undernourished'].mean()]
     high_obesity = (kcal_adj_sorted_by_undernourished.sort_values('Obesity', ascending=False).head(10)
-        .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                         )
+        .drop(columns=['Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', "Vegetal Products",'Animal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
+                         ).replace({'United States of America': 'USA'}) #I get rid of Vegetal Products because they combine things listed in other food categories, thus, I don't need it (check description dataset if needed). Also, I change for USA for shorter width of y-label.
     low_obesity = (kcal_adj_sorted_by_undernourished.sort_values('Obesity', ascending=True).head(10)
-        .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                         )
-    st.write('### Food Habits of top-10 Most Obesed countries')
+        .drop(columns=['Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products',"Vegetal Products", 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
+                         ) #I get rid of Vegetal Products because they combine things listed in other food categories, thus, I don't need it (check description dataset if needed)
+    high_obesity_melted=high_obesity.melt(id_vars="Country", var_name="Food")
+    high_obesity_melted["value"] = high_obesity_melted["value"] * 2 #I multiply because Vegetal Products (which I get rid of) constitute 50% of consumption
+    low_obesity_melted = low_obesity.melt(id_vars="Country", var_name="Food")
+    low_obesity_melted["value"] = low_obesity_melted["value"] * 2
+    high_obesity_chart = alt.Chart(high_obesity_melted, title='Food Habits of top-10 Most Obesed countries').mark_bar().encode(
+        x=alt.X('sum(value)',  title='Total Consumption by Categories (%)', scale=alt.Scale(domain=[0, 100])),
+            y='Country',
+                color=alt.Color('Food', scale=alt.Scale(scheme='category20'), legend=alt.Legend(title="Food Categories")),
+                    order=alt.Order('Food', sort='ascending')).configure_title(fontSize=20)
+    st.altair_chart(high_obesity_chart, use_container_width=True)
+    low_obesity_chart = alt.Chart(low_obesity_melted, title='Food Habits of Top-10 Least Obesed Countries').mark_bar().encode(
+        x=alt.X('sum(value)', title='Total Consumption by Categories (%)', scale=alt.Scale(domain=[0,100])),
+            y='Country',
+                color=alt.Color('Food', scale=alt.Scale(scheme = 'category20'), legend=alt.Legend(title="Food Categories")),
+                    order=alt.Order('Food',sort='ascending')).configure_title(fontSize=20)
+    st.altair_chart(low_obesity_chart, use_container_width=True)
+    st.write('Still, I want to show the overview, so I will use the same type of plot as before for generalisation.')
+    st.write('### Average Food Habits of top-10 Most Obesed countries')
     food_obesity_death(high_obesity)
-    st.write('### Food Habits of Top-10 Least Obesed countries')
+    st.write("### Average Food Habits of top-10 Least Obesed countries")
     food_obesity_death(low_obesity)
-    st.write("The general pattern remains the same: in the least obesed countries people consume much more cereals (carbs) and slightly more vegetables, while consuming much less of other types of food compared to the most obesed countries.")
+    st.write("The general pattern remains the same: in the least obesed countries people consume much more cereals, starchy roots (both are healthy, complex carbs) and slightly more vegetables and fish, while consuming much less of other types of food compared to the most obesed countries.")
     st.write("Now I suggest we analyze correlation between different types of food and obesity")
     def function_for_food_plots(A):
         fig6, ax6 = plt.subplots()
@@ -193,27 +219,18 @@ with st.echo(code_location="below"):
     obesity_data_adj = obesity_data_adj.drop(columns=['Obesity'])
     obesity_data_merged = obesity_data_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
     fig_obesity=px.choropleth(obesity_data_merged[obesity_data_merged['Sex'] == 'Both sexes'], locations='alpha-3', color='Obesity (%)',
-                            range_color = (0, 28), hover_name ='Country', hover_data=['Obesity (%)', 'Year'], color_continuous_scale=px.colors.diverging.BrBG, animation_frame="Year", projection='equirectangular',
+                            range_color = (0, 28), hover_name ='Country', hover_data=['Obesity (%)', 'Year'], color_continuous_scale="YlOrRd", animation_frame="Year", projection='equirectangular',
                               animation_group='region', title='The Obesity Rate Around the Globe (1975-2016)', labels={'Obesity (%)': 'Obesity Rate (%)'})
     st.plotly_chart(fig_obesity)
     st.write('As you might notice, the developed world is getting more and more obesed (and Russia is not an exception). Obesity is dangerous because it can lead to serious diseases.')
     st.write()
-    st.write('Last but not least, I want to analyze the gender patterns concerning obesity')
+    st.write('I want to analyze the gender patterns concerning obesity')
     obesity_data_mean = obesity_data_adj.groupby(['Year', 'Sex']).mean().reset_index(level='Sex').reset_index(level='Year')
-    obesity_data_mean_adj = obesity_data_mean[obesity_data_mean['Sex'] != 'Both sexes'].drop(columns = obesity_data_mean.columns[2])
-    obesity_data_mean_adj["Year"]=pd.to_datetime(obesity_data_mean_adj["Year"], format="%Y")
+    obesity_data_mean_adj = obesity_data_mean.drop(columns = obesity_data_mean.columns[2])
     fig8, ax8 = plt.subplots()
-    finalplot = (
-        alt.Chart(obesity_data_mean_adj).mark_circle().encode(
-        x= alt.X('Year',
-                scale=alt.Scale(domain=[1975, 2016])),
-        y=alt.Y('Obesity (%)'),
-        color='Sex').interactive()
-    )
-    st.altair_chart(finalplot.interactive(), use_container_width=True)
     sns.scatterplot(data=obesity_data_mean_adj, x='Year', y='Obesity (%)', hue = 'Sex',
-                    palette="Paired",
-                    style = 'Sex', markers=['^', 'v'], ax=ax8)
+                    palette="cubehelix",
+                    style = 'Sex', markers=['o', '^', 'v'], ax=ax8)
     ax8.set(ylabel='Obesity Rate, Average (%)')
     ax8.legend(loc='center right', bbox_to_anchor=(1, .25), title=None)
     ax8.set_title('The Average Obesity Rate by Gender (1975-2016)')
