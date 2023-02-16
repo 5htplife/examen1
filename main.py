@@ -25,7 +25,7 @@ with st.echo(code_location="below"):
     )
     st.sidebar.markdown('''
     # Contents
-    - [COVID situation in the world](#covid-situation-in-the-world)
+    - [COVID-19 situation in the world](#covid-situation-in-the-world)
     - [Obesity and Coronavirus](#obesity-and-coronavirus)
     - [Obesity and Food Habits](#obesity-and-food-habits)
     - [Remark](#remark)
@@ -40,16 +40,18 @@ with st.echo(code_location="below"):
     kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#we don't need units and I drop "Active" because 1) I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
     kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed'] #I find mortality as it is one of the main indicators of COVID situation in the country
     st.markdown('# COVID-19, Obesity and Food Habits')
-    st.write("The coronavirus pandemic incentivized many people to reconsider their lifestyle habits, including their consumption habits.")
-    st.write("This project aims to offer an insight in aggregate food habits of people in countries all over the globe.")
+    st.write("According to Gonzalez-Monroy (2021) food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables.")
+    st.write("Such food patterns have been proven to worsen health in the long-run so people should be inventivised to reverse this trend.")
+    st.write("This project aims to offer an insight in aggregate food habits of people in 170 countries and link it to the COVID-19 rate.")
     st.write("## COVID situation in the world")
-    st.write("The map shows COVID-19 situation in the world based on confirmed cases in the middle of 2021.")
+    st.write("COVID-19 started in the early 2020 and spread rapidly across the globe. We obtain information on the COVID-19 status in 170 countries relevant in the middle of 2021. The 2021 was the pinnacle of COVID-19 with Delta variant, the last potent mutation, peaking exactly in the middle of 2021.")
+    st.write("The map shows COVID-19 confirmed cases in the middle of 2021 across 170 countries around the globe.")
     kcal_adj_merged=kcal_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
     fig_general=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
                          hover_name='Country', hover_data = ['Confirmed', 'Deaths', 'Population'], size='Confirmed', labels={'Confirmed': 'Confirmed Cases (%)', 'Deaths': 'Death Rate (%)', 'Mortality': 'Mortality Rate (%)'},
-                         projection='natural earth', title='COVID-19 Situation In the World')
-    st.plotly_chart(fig_general)
-    kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed']
+                         projection='natural earth', title='COVID-19 Confirmed Cases across the Globe')
+    fig_general.update_layout(width=1100,height=900)
+    st.plotly_chart(fig_general, width=1100,height=900)
     covid_options = st.selectbox('What in particular would you like to see?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
     if covid_options == 'COVID Mortality Rate':
         kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
