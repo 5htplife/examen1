@@ -38,8 +38,7 @@ with st.echo(code_location="below"):
                                 ,"Macedonia": "North Macedonia",
                              'Venezuela': 'Venezuela (Bolivarian Republic of)'})
     kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#we don't need units and I drop "Active" because 1) I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
-    kcal_adj['Mortality'] = kcal_adj['Deaths']/kcal_adj['Confirmed'] #I find mortality as it is one of the main indicators of COVID situation in the country
-    st.markdown('# COVID-19, Obesity and Food Habits')
+    st.markdown('# Analysis of Food Habits and COVID-19 Situation')
     st.write("According to Gonzalez-Monroy (2021) food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables.")
     st.write("Such food patterns have been proven to worsen health in the long-run so people should be inventivised to reverse this trend.")
     st.write("This project aims to offer an insight in aggregate food habits of people in 170 countries and link it to the COVID-19 rate.")
