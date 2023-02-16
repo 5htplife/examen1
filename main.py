@@ -37,7 +37,8 @@ with st.echo(code_location="below"):
                                 ,"Korea, Republic of": "Korea, North", "South Korea": "Korea, South", "Moldova": "Republic of Moldova"
                                 ,"Macedonia": "North Macedonia",
                              'Venezuela': 'Venezuela (Bolivarian Republic of)'})
-    kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#we don't need units and I drop "Active" because 1) I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
+    kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#no need to keep units
+    #I also drop "Active": I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
     st.markdown('# Analysis of Food Habits and COVID-19 Situation')
     st.write("According to Gonzalez-Monroy (2021) food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables.")
     st.write("Such food patterns have been proven to worsen health in the long-run so people should be inventivised to reverse this trend.")
@@ -51,27 +52,36 @@ with st.echo(code_location="below"):
                          projection='natural earth', title='COVID-19 Confirmed Cases across the Globe')
     fig_general.update_layout(width=800,height=800)
     st.plotly_chart(fig_general, width=800,height=800)
-    covid_options = st.selectbox('What in particular would you like to see?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
-    if covid_options == 'COVID Mortality Rate':
-        kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
-        fig_bar_mortality = px.bar(kcal_adj_sorted, x='Country', y='Mortality', title='COVID Mortality by Country',
-                                   labels={'Mortality': 'Mortality Rate (%)'}, height=400)
-        st.plotly_chart(fig_bar_mortality)
-    elif covid_options == 'Confirmed Cases':
+    st.write("The highest rate of confirmed cases is in Montenegro, Czech Republic, Slovenia, the US and Luxembourg.")
+    st.write("Notice that these countries are either very developed and/or small so that it is easier to obtain up-to-date status on the number of infected population.")
+    st.write("Therefore, it is reasonable to suggest that the real proportion of infected people in less developed countries is higher than observed.")
+    st.write("Below you can observe confirmed cases and death rates by country.")
+    covid_options = st.selectbox('Which data would you like to see?', ['Death Rate', 'Confirmed Cases'])
+    if covid_options == 'Confirmed Cases':
         kcal_adj_sorted = kcal_adj.sort_values(by='Confirmed', ascending=False)
         fig_bar_confirmed = px.bar(kcal_adj_sorted, x='Country', y='Confirmed', hover_data=['Confirmed'],
                                    color='Confirmed',
                                    title='COVID Confirmed Cases by Country',
                                    labels={'Confirmed': 'Confirmed COVID-19 Cases (%)'})
-        st.plotly_chart(fig_bar_confirmed)
+        fig_bar_confirmed.update_layout(width=800, height=800)
+        st.plotly_chart(fig_bar_confirmed, width=800, height=800)
     else:
         kcal_adj_sorted = kcal_adj.sort_values(by='Deaths', ascending=False)
         fig_bar_deaths = px.bar(kcal_adj_sorted, x='Country', y='Deaths', hover_data=['Deaths'], color='Deaths',
                                 title='COVID Deaths by Country', labels={'Deaths': 'Death Rate (%)'})
-        st.plotly_chart(fig_bar_deaths)
-    st.write("## Obesity and Coronavirus")
-    st.write("Let's look how obesity and COVID-19 are correlated around the globe")
-    kcal_covid = kcal_adj[['Obesity','Deaths', 'Confirmed', 'Mortality']]
+        fig_bar_deaths.update_layout(width=800, height=800)
+        st.plotly_chart(fig_bar_deaths, width=800, height=800)
+    st.write("## Obesity")
+    st.write("Obesity is currently the problem for lots of developed and developing countries.")
+    st.write("It is linked to heart diseases, diabetes, and generally worsened life conditions.")
+    st.write("Let's look how obesity rate ranges among countries")
+    fig_obesity=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
+                         hover_name='Country', hover_data = ['Obesity','Population'], size='Obesity', labels={'Obesity': 'Obesity Rate (%)'}
+                         , title='Obesity across the Globe')
+    fig_obesity.update_layout(width=800,height=800)
+    st.plotly_chart(fig_obesity, width=800,height=800)
+    st.write("Let's look how obesity and COVID-19 rates are correlated around the globe")
+    kcal_covid = kcal_adj[['Obesity','Deaths', 'Confirmed']]
     obesity_covid_correlation_options = st.selectbox('How do you prefer to view correlation?', ['Heatmap, please', 'I prefer multiple plots'])
     if obesity_covid_correlation_options == 'I prefer multiple plots':
         fig1, ax1 = plt.subplots()
