@@ -49,8 +49,8 @@ with st.echo(code_location="below"):
     fig_general=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
                          hover_name='Country', hover_data = ['Confirmed', 'Deaths', 'Population'], size='Confirmed', labels={'Confirmed': 'Confirmed Cases (%)', 'Deaths': 'Death Rate (%)', 'Mortality': 'Mortality Rate (%)'},
                          projection='natural earth', title='COVID-19 Confirmed Cases across the Globe')
-    fig_general.update_layout(width=1100,height=900)
-    st.plotly_chart(fig_general, width=1100,height=900)
+    fig_general.update_layout(width=800,height=800)
+    st.plotly_chart(fig_general, width=800,height=800)
     covid_options = st.selectbox('What in particular would you like to see?', ['COVID Deaths', 'Confirmed Cases', 'COVID Mortality Rate'])
     if covid_options == 'COVID Mortality Rate':
         kcal_adj_sorted = kcal_adj.sort_values(by='Mortality', ascending=False)
