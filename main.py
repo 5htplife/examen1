@@ -13,12 +13,9 @@ import datetime
 
 with st.echo(code_location="below"):
     @st.cache
-    def get_kcal():
-        return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/Food_Supply_kcal_Data.csv")
-    @st.cache
-    def get_iso():
-        return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/continents2%202.csv")
-    st.set_page_config(
+    def get_excess_mortality():
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
+     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
         page_icon="🧊",
         layout="centered"
@@ -30,51 +27,63 @@ with st.echo(code_location="below"):
     - [Obesity and Food Habits](#obesity-and-food-habits)
     - [Remark](#remark)
     ''', unsafe_allow_html=True)
-    kcal = get_kcal()
-    iso = get_iso().rename(columns={'name': 'Country'})
-    iso_adj = iso.replace({'United States': 'United States of America'
-                                ,'Congo (Democratic Republic Of The)': 'Congo', 'Russia': 'Russian Federation', 'Iran': 'Iran (Islamic Republic of)'
-                                ,"Korea, Republic of": "Korea, North", "South Korea": "Korea, South", "Moldova": "Republic of Moldova"
-                                ,"Macedonia": "North Macedonia",
-                             'Venezuela': 'Venezuela (Bolivarian Republic of)'})
-    kcal_adj = kcal.drop(["Unit (all except Population)", "Active"], axis = 1).dropna()#no need to keep units
-    #I also drop "Active": I'm not planning to use this column 2) Also, "Active" column has some NAs for countries I want to keep, then I also drop all countries where we cannot estimate the values
+    excess_mortality = get_excess_mortality()
     st.markdown('# Analysis of Food Habits and COVID-19 Situation')
     st.write("According to Gonzalez-Monroy (2021) food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables.")
-    st.write("Such food patterns have been proven to worsen health in the long-run so people should be inventivised to reverse this trend.")
+    st.write("Such food patterns have been proven to worsen health in the long-run so people should be incentivised to reverse this trend.")
     st.write("This project aims to offer an insight in aggregate food habits of people in 170 countries and link it to the COVID-19 rate.")
     st.write("## COVID situation in the world")
     st.write("COVID-19 started in the early 2020 and spread rapidly across the globe. We obtain information on the COVID-19 status in 170 countries relevant in the middle of 2021. The 2021 was the pinnacle of COVID-19 with Delta variant, the last potent mutation, peaking exactly in the middle of 2021.")
-    st.write("The map shows COVID-19 confirmed cases in the middle of 2021 across 170 countries around the globe.")
-    kcal_adj_merged=kcal_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
-    fig_general=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
-                         hover_name='Country', hover_data = ['Confirmed', 'Deaths', 'Population'], size='Confirmed', labels={'Confirmed': 'Confirmed Cases (%)', 'Deaths': 'Death Rate (%)', 'Mortality': 'Mortality Rate (%)'},
-                         projection='natural earth', title='COVID-19 Confirmed Cases across the Globe')
+    st.write("The map shows excess mortality across 122 countries using data obtained by Karlinsky & Kobak (2021).")
+    st.write("The countries that are singled out are the ones that have the largest number of excess deaths.")
+    excess_mortality['size'] = excess_mortality['Excess deaths']
+    excess_mortality.loc[excess_mortality['size'] < 0, 'size'] = 1
+    fig_general = px.scatter_geo(excess_mortality, locations='iso3c', color='Country',
+                         hover_name='Country',
+                         hover_data=['Country', 'COVID-19 deaths', 'Excess deaths', 'Excess per 100k'], size='size',
+                         projection='natural earth', title='COVID-19 Excess Mortality around the Globe')
     fig_general.update_layout(width=800,height=800)
     st.plotly_chart(fig_general, width=800,height=800)
-    st.write("The highest rate of confirmed cases is in Montenegro, Czech Republic, Slovenia, the US and Luxembourg.")
-    st.write("Notice that these countries are either very developed and/or small so that it is easier to obtain up-to-date status on the number of infected population.")
-    st.write("Therefore, it is reasonable to suggest that the real proportion of infected people in less developed countries is higher than observed.")
-    st.write("Below you can observe confirmed cases and death rates by country.")
-    covid_options = st.selectbox('Which data would you like to see?', ['Death Rate', 'Confirmed Cases'])
-    if covid_options == 'Confirmed Cases':
-        kcal_adj_sorted = kcal_adj.sort_values(by='Confirmed', ascending=False)
-        fig_bar_confirmed = px.bar(kcal_adj_sorted, x='Country', y='Confirmed', hover_data=['Confirmed'],
-                                   color='Confirmed',
-                                   title='COVID Confirmed Cases by Country',
-                                   labels={'Confirmed': 'Confirmed COVID-19 Cases (%)'})
-        fig_bar_confirmed.update_layout(width=800, height=800)
+    excess_mortality.sort_values(by=['Excess deaths'], ascending=False)
+    st.write("Top-5 countries with the greatest number of excess deaths are the US, Russia, Brazil, Mexico, and Egypt.")
+    st.write("In our further discussion, we will have a closer look at 3 countries among top-5: the US, Russia, and Mexico.")
+    st.write("We can also have a look at other measures such as confirmed COVID-19 deaths, excess deaths per 100'000 people, and undercount ratio (the ratio between excess deaths and confirmed deaths).")
+    st.write("Below, you can have a closer look at these measures.")
+    covid_options = st.selectbox('Which data would you like to see?', ['COVID-19 Confirmed Deaths', 'Excess Deaths per 100k', 'Undercount Ratio'])
+    if covid_options == 'COVID-19 Confirmed Deaths':
+        excess_mortality_sorted = excess_mortality.sort_values(by='COVID-19 deaths', ascending=False)
+        fig_bar_confirmed = px.bar(excess_mortality_sorted, x='Country', y='COVID-19 deaths', hover_data=['COVID-19 deaths'],
+                                   color='COVID-19 deaths',
+                                   title='COVID-19 Confirmed Deaths by Country',
+                                   labels={'COVID-19 deaths': 'Confirmed COVID-19 Deaths'})
+        fig_bar_confirmed.update_layout(width=800, height=800, xaxis=dict(showgrid=False))
         st.plotly_chart(fig_bar_confirmed, width=800, height=800)
+    elif covid_options == 'Excess Deaths':
+        excess_mortality_sorted = excess_mortality.sort_values(by='Excess per 100k', ascending=False)
+        fig_bar_per100 = px.bar(excess_mortality_sorted, x='Country', y='Excess per 100k',
+                                   hover_data=['Excess per 100k'],
+                                   color='Excess per 100k',
+                                   title='COVID-19 Excess Deaths per 100k by Country',
+                                   labels={'Excess per 100k': 'Excess Deaths per 100k'})
+        fig_bar_per100.update_layout(width=800, height=800, xaxis=dict(showgrid=False))
+        st.plotly_chart(fig_bar_per100, width=800, height=800)
     else:
-        kcal_adj_sorted = kcal_adj.sort_values(by='Deaths', ascending=False)
-        fig_bar_deaths = px.bar(kcal_adj_sorted, x='Country', y='Deaths', hover_data=['Deaths'], color='Deaths',
-                                title='COVID Deaths by Country', labels={'Deaths': 'Death Rate (%)'})
-        fig_bar_deaths.update_layout(width=800, height=800)
-        st.plotly_chart(fig_bar_deaths, width=800, height=800)
+        excess_mortality_sorted = excess_mortality.sort_values(by='Undercount ratio', ascending=False)
+        fig_bar_undercount = px.bar(excess_mortality_sorted, x='Country', y='Undercount ratio',
+                                hover_data=['Undercount ratio'],
+                                color='Undercount ratio',
+                                title='Undercount ratio by Country',
+                                labels={'Undercount ratio': 'Undercount ratio'})
+        fig_bar_undercount.update_layout(width=800, height=800, xaxis=dict(showgrid=False))
+        st.plotly_chart(fig_bar_undercount, width=800, height=800)
+
+
+
+
+
+
     st.write("## Obesity")
-    st.write("Obesity is currently the problem for lots of developed and developing countries.")
-    st.write("It is linked to heart diseases, diabetes, and generally worsened life conditions.")
-    st.write("Let's look how obesity rate ranges among countries")
+    st.write("Obesity is currently the problem for lots of developed and developing countries. It is linked to heart diseases, diabetes, and generally worsened life conditions. Let's look how obesity rate ranges among countries.")
     fig_obesity=px.scatter_geo(kcal_adj_merged, locations='alpha-3', color='Country',
                          hover_name='Country', hover_data = ['Obesity','Population'], size='Obesity', labels={'Obesity': 'Obesity Rate (%)'}
                          , title='Obesity across the Globe')
