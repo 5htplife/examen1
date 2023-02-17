@@ -58,7 +58,7 @@ with st.echo(code_location="below"):
                                    labels={'COVID-19 deaths': 'Confirmed COVID-19 Deaths'})
         fig_bar_confirmed.update_layout(width=800, height=800, xaxis=dict(showgrid=False))
         st.plotly_chart(fig_bar_confirmed, width=800, height=800)
-    elif covid_options == 'Excess Deaths':
+    elif covid_options == 'Excess Deaths per 100k':
         excess_mortality_sorted = excess_mortality.sort_values(by='Excess per 100k', ascending=False)
         fig_bar_per100 = px.bar(excess_mortality_sorted, x='Country', y='Excess per 100k',
                                    hover_data=['Excess per 100k'],
