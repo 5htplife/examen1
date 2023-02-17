@@ -15,7 +15,7 @@ with st.echo(code_location="below"):
     @st.cache
     def get_excess_mortality():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
-     st.set_page_config(
+    st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
         page_icon="🧊",
         layout="centered"
