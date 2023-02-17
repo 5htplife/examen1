@@ -16,7 +16,7 @@ with st.echo(code_location="below"):
     def get_excess_mortality():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
     @st.cache
-    def get_nutrition_percent() -> object:
+    def get_nutrition_percent():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_percent.csv")
     @st.cache
     def get_nutrition_total():
