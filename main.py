@@ -21,9 +21,6 @@ with st.echo(code_location="below"):
     @st.cache
     def get_nutrition_total():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_total.csv")
-    @st.cache
-    def get_iso():
-        return pd.read_excel("https://github.com/5htplife/dataforexamen1/raw/main/iso3.xlsx")
     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
         page_icon="🧊",
