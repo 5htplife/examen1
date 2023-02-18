@@ -18,10 +18,12 @@ with st.echo(code_location="below"):
     @st.cache
     def get_nutrition_percent():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_percent.csv")
-
     @st.cache
     def get_nutrition_total():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_total.csv")
+    @st.cache
+    def get_iso():
+        return pd.read_excel("https://github.com/5htplife/dataforexamen1/raw/main/iso3.xlsx")
 
     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
@@ -37,6 +39,8 @@ with st.echo(code_location="below"):
     ''', unsafe_allow_html=True)
     excess_mortality = get_excess_mortality()
     nutrition_percent = get_nutrition_percent()
+    iso = get_iso()
+    iso
     st.markdown('# COVID-19 and Food Habits')
     st.write("According to Gonzalez-Monroy (2021) food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables. Such food patterns have been proven to worsen health in the long-run so people should be incentivised to reverse this trend. This project aims to offer an insight in aggregate food habits of people in 122 countries and link it to the COVID-19 situation in those countries.")
     st.write("The project consists of 3 parts: first, we are going to have a look at the COVID-19 situation in 122 countries; second, we will offer insights in food habits of people across the globe; third, we are going to look whether food habits and COVID are related.")
