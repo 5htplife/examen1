@@ -64,7 +64,7 @@ with st.echo(code_location="below"):
                                    title='COVID-19 Confirmed Deaths by Country',
                                    labels={'COVID-19 deaths': 'Confirmed COVID-19 Deaths'})
         fig_bar_confirmed.update_layout(width=800, height=800, xaxis=dict(showgrid=False), yaxis=dict(showgrid=False))
-        st.plotly_chart(fig_bar_confirmed, width=800, height=800)
+        st.plotly_chart(fig_bar_confirmed, width=800, height=600)
     elif covid_options == 'Excess Deaths per 100k':
         excess_mortality_sorted = excess_mortality.sort_values(by='Excess per 100k', ascending=False)
         fig_bar_per100 = px.bar(excess_mortality_sorted, x='Country', y='Excess per 100k',
@@ -73,7 +73,7 @@ with st.echo(code_location="below"):
                                    title='COVID-19 Excess Deaths per 100k by Country',
                                    labels={'Excess per 100k': 'Excess Deaths per 100k'})
         fig_bar_per100.update_layout(width=800, height=800, xaxis=dict(showgrid=False), yaxis=dict(showgrid=False) )
-        st.plotly_chart(fig_bar_per100, width=800, height=800)
+        st.plotly_chart(fig_bar_per100, width=800, height=600)
     else:
         excess_mortality_sorted = excess_mortality.sort_values(by='Undercount ratio', ascending=False)
         fig_bar_undercount = px.bar(excess_mortality_sorted, x='Country', y='Undercount ratio',
@@ -82,7 +82,7 @@ with st.echo(code_location="below"):
                                 title='Undercount ratio by Country',
                                 labels={'Undercount ratio': 'Undercount ratio'})
         fig_bar_undercount.update_layout(width=800, height=800, xaxis=dict(showgrid=False), yaxis=dict(showgrid=False))
-        st.plotly_chart(fig_bar_undercount, width=800, height=800)
+        st.plotly_chart(fig_bar_undercount, width=800, height=600)
 
     st.write("Interesting, although not surprising observation from the chart above is that the highest undercount ratio is in the less developed countries such as Tajikistan, Nicaragua, and Uzbekistan.")
     st.write("We will focus on excess deaths alone, as it is the most appropriate metric for the relationship we want to look at.")
@@ -94,11 +94,11 @@ with st.echo(code_location="below"):
 
     st.write('We offer insights into dietary habits of people in various countries')
 
-    countries = nutrition_percent['country']
+    countries = nutrition_percent['country'].astype(str)
     country_options = st.selectbox('Choose a country', countries)
-    percountry = nutrition_percent[nutrition_percent['country'] == country_options]
-    country1 = percountry.drop(
-        columns=['Unnamed: 0.1', 'Unnamed: 0', 'iso3', 'age', 'female', 'urban', 'edu',
+    per_country_habits = nutrition_percent[nutrition_percent['country'] == country_options]
+    country1 = per_country_habits.drop(
+        columns=['iso3', 'age', 'female', 'urban', 'edu',
        'year', 'Vitamin B9', 'Vitamin B3', 'Vitamin B2', 'Zinc',
        'Vitamin E', 'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6',
        'Vitamin A', 'Selenium', 'Potassium', 'Magnesium', 'Iron', 'Iodine',
