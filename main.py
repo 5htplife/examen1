@@ -97,9 +97,9 @@ with st.echo(code_location="below"):
 
     st.write('We offer insights into dietary habits of people in various countries')
     nutrition_percent = get_nutrition_percent()
-    nutrition_percent
     iso = get_iso()
     nutrition_percent = nutrition_percent.merge(iso, how='inner', left_on = 'iso3', right_on = 'iso3c')
+    nutrition_percent
     countries = nutrition_percent['country_name'].astype(str)
     country_options = st.selectbox('Choose a country', countries)
     per_country_habits = nutrition_percent[nutrition_percent['country_name'] == country_options]
