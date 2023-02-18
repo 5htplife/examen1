@@ -150,7 +150,7 @@ with st.echo(code_location="below"):
         st.plotly_chart(fig_bar_undercount, width=800, height=800)
     else:
         obesity_male = obesity[obesity['Indicator Name'] == 'Male']
-        fig_obesity = px.scatter_geo(obesity_male, locations="iso3c", color="Country",
+        fig_obesity = px.scatter_geo(obesity_male, locations="Country Code", color="Country",
                                      hover_name="Country Name", size="Value",
                                      animation_frame="Year",
                                      projection="natural earth")
