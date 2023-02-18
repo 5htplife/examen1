@@ -101,9 +101,9 @@ with st.echo(code_location="below"):
     nutrition_percent = nutrition_percent.merge(iso, how='inner', left_on = 'iso3', right_on = 'iso3c')
     countries = nutrition_percent['country_name'].astype(str)
     country_options = st.selectbox('Choose a country', countries)
-    per_country_habits = nutrition_percent[nutrition_percent['country'] == country_options]
+    per_country_habits = nutrition_percent[nutrition_percent['country_name'] == country_options]
     country1 = per_country_habits.drop(
-        columns=['iso3', 'age', 'female', 'urban', 'edu',
+        columns=['Unnamed: 0.1', 'Unnamed: 0', 'iso3', 'age', 'female', 'urban', 'edu',
        'year', 'Vitamin B9', 'Vitamin B3', 'Vitamin B2', 'Zinc',
        'Vitamin E', 'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6',
        'Vitamin A', 'Selenium', 'Potassium', 'Magnesium', 'Iron', 'Iodine',
