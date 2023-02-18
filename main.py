@@ -21,6 +21,7 @@ with st.echo(code_location="below"):
     @st.cache
     def get_nutrition_total():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_total.csv")
+
     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
         page_icon="🧊",
@@ -92,12 +93,11 @@ with st.echo(code_location="below"):
     st.write("## Food Habits")
 
     st.write('We offer insights into dietary habits of people in various countries')
-    nutrition_percent[['country']]
 
-    countries = nutrition_percent[['country']]
+    countries = nutrition_percent['country']
     country_options = st.selectbox('Choose a country', countries)
-    country = nutrition_percent[nutrition_percent['country'] == country_options]
-    country1 = country.drop(
+    percountry = nutrition_percent[nutrition_percent['country'] == country_options]
+    country1 = percountry.drop(
         columns=['Unnamed: 0.1', 'Unnamed: 0', 'iso3', 'age', 'female', 'urban', 'edu',
        'year', 'Vitamin B9', 'Vitamin B3', 'Vitamin B2', 'Zinc',
        'Vitamin E', 'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6',
