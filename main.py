@@ -154,7 +154,7 @@ with st.echo(code_location="below"):
                                      hover_name="Country Name", size="Value",
                                      animation_frame="Year",
                                      projection="natural earth")
-        st.plotly_chart(fig_bar_undercount, width=800, height=800)
+        st.plotly_chart(fig_bar_undercount, width=800, height=600)
 
 
 
