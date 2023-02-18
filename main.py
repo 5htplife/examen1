@@ -9,6 +9,8 @@ import os
 import plotly.express as px
 from scipy import stats
 import datetime
+from PIL import Image
+
 
 
 with st.echo(code_location="below"):
@@ -24,6 +26,10 @@ with st.echo(code_location="below"):
     @st.cache
     def get_iso():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/iso.csv")
+
+    @st.cache
+    def get_obesity_data():
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
 
     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
@@ -103,7 +109,7 @@ with st.echo(code_location="below"):
     country_options = st.selectbox('Choose a country', countries)
     per_country_habits = nutrition_percent[nutrition_percent['country_name'] == country_options]
     country1 = per_country_habits.drop(
-        columns=['Unnamed: 0_x', 'Unnamed: 0.1', 'iso3', 'age', 'female', 'urban', 'edu',
+        columns=['Unnamed: 0_x', 'Unnamed: 0_y', 'Unnamed: 0.1', 'iso3', 'age', 'female', 'urban', 'edu',
        'year', 'Vitamin B9', 'Vitamin B3', 'Vitamin B2', 'Zinc',
        'Vitamin E', 'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6',
        'Vitamin A', 'Selenium', 'Potassium', 'Magnesium', 'Iron', 'Iodine',
@@ -118,6 +124,44 @@ with st.echo(code_location="below"):
                                         labels={'index': 'Type of Food', 'food': 'Per cent of Total Food Intake'},
                                         title='Food Habits in the Country')
     st.plotly_chart(fig_nutrition_each_country)
+
+    st.write("### Obesity")
+
+    st.write("Undoubtedly, nutrition patterns are linked to physical health and especially obesity levels across countries.")
+    st.write("Let's look how obesity rates changed throughout the years in the world.")
+
+    gender_option = st.selectbox('Choose gender:', ['Female', 'Male'])
+
+    obesity = get_obesity_data()
+    obesity['Indicator Name'] = np.where(
+        (obesity['Indicator Name'] == 'Prevalence of obesity, female (% of female population ages 18+)'), 'Female',
+        obesity['Indicator Name'])
+    obesity['Indicator Name'] = np.where(
+        (obesity['Indicator Name'] == 'Prevalence of obesity, male (% of male population ages 18+)'), 'Male',
+        obesity['Indicator Name'])
+    obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
+    obesity = obesity[obesity['Country Name'] != 'World']
+    if gender_option == 'Female':
+        obesity_female = obesity[obesity['Indicator Name'] == 'Female']
+        fig_obesity = px.scatter_geo(obesity_female, locations="iso3c", color="Country",
+                             hover_name="Country Name", size="Value",
+                             animation_frame="Year",
+                             projection="natural earth")
+        st.plotly_chart(fig_bar_undercount, width=800, height=800)
+    else:
+        obesity_male = obesity[obesity['Indicator Name'] == 'Male']
+        fig_obesity = px.scatter_geo(obesity_male, locations="iso3c", color="Country",
+                                     hover_name="Country Name", size="Value",
+                                     animation_frame="Year",
+                                     projection="natural earth")
+        st.plotly_chart(fig_bar_undercount, width=800, height=800)
+
+
+
+
+    st.write("Also, it is interesting to learn about micronutrient distribution in different countries.")
+    st.write("It is essential for further analysis of food habits and COVID-19 relationship because during COVID outbreak many doctors advised patients to take supplements such as vitamin C, vitamin B12, vitamin D, and zinc. There is anecdotal evidence that these supplements help immune system during COVID.")
+    country_options2 = st.selectbox('Choose a country', countries)
 
 
 
