@@ -93,7 +93,7 @@ with st.echo(code_location="below"):
     st.write("## Food Habits")
 
     st.write('We offer insights into dietary habits of people in various countries')
-
+    nutrition_percent
     countries = nutrition_percent['country'].astype(str)
     country_options = st.selectbox('Choose a country', countries)
     per_country_habits = nutrition_percent[nutrition_percent['country'] == country_options]
