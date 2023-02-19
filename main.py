@@ -156,12 +156,12 @@ with st.echo(code_location="below"):
     obesity_male = obesity[obesity['Indicator Name'] == 'Male']
     if gender_option == 'Female':
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
-                             hover_name="Country Name", size="Value", animation_frame="Year",
+                             hover_name="Country Name", size="Value",
                              projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
         fig_obesity2 = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
-                                     hover_name="Country Name", size="Value", animation_frame="Year",
+                                     hover_name="Country Name", size="Value",
                                      projection="natural earth")
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
