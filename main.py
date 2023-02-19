@@ -163,7 +163,7 @@ with st.echo(code_location="below"):
     st.write("Yet, what we can do is analyze food habits across countries and obesity rates. We have run the regression on obesity level and different food types.")
     st.write("The results are presented below. You can notice that the adjusted R-squared is not very high, so there is a big part that remains unexplained. However, you can see the relationship between certain foods and obesity.")
     st.write("Important: no causal relationship is claimed, only correlation.")
-    image = Image.open('regression.png')
+    image = Image.open('regression.png', height = 400, width = 400)
     st.image(image, caption='Regression Results Food & Obesity')
     st.write("We can have a closer look on the relationship between each food type and obesity.")
     nutrition_obesity = get_nutrition_obesity_by_gender()
@@ -173,7 +173,11 @@ with st.echo(code_location="below"):
         ax6.set(xlabel='Obesity (%)')
         ax6.set_title('Correlation between Obesity and The Chosen Food Type')
         return st.pyplot(fig6)
-    list_of_products = ['tea', 'coffee', 'fruit juices', 'sugary beverages', 'yogurt', 'cheese', 'eggs', 'seafood', 'red meat', 'processed meat', 'whole grains', 'refined grains', 'nuts and seeds', 'beans and legumes', 'potatoes', 'non starchy vegetables', 'fruits']
+    list_of_products = ['Tea', 'Coffee', 'Fruit juices', 'Sugar-sweetened beverages',
+       'Yoghurt (including fermented milk)', 'Cheese', 'Eggs',
+       'Total seafoods', 'Unprocessed red meats', 'Total processed meats',
+       'Whole grains', 'Refined grains', 'nuts and seeds', 'beans and legumes',
+       'potatoes', 'non-starchy vegetables', 'fruits']
     food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
     for element in list_of_products:
         if food_options == element:
