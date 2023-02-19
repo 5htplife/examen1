@@ -26,7 +26,9 @@ with st.echo(code_location="below"):
     @st.cache(allow_output_mutation=True)
     def get_iso():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/iso.csv")
-
+    @st.cache(allow_output_mutation=True)
+    def get_nutrition_by_gender():
+        return pd.read_csv("")
     @st.cache(allow_output_mutation=True)
     def get_obesity_data():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
@@ -141,19 +143,17 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity.sort_values(by=['Year'], ascending=True)
+    obesity = obesity[obesity['Year'] == 2016)
     if gender_option == 'Female':
         obesity_female = obesity[obesity['Indicator Name'] == 'Female']
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
                              hover_name="Country Name", size="Value",
-                             animation_frame="Year",
                              projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
         obesity_male = obesity[obesity['Indicator Name'] == 'Male']
         fig_obesity = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
                                      hover_name="Country Name", size="Value",
-                                     animation_frame="Year",
                                      projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
 
@@ -162,10 +162,24 @@ with st.echo(code_location="below"):
     st.write("This is the question that a lot of medical scientists are concerned wit, and our project certainly can't offer any certain answer to it. ")
     st.write("Yet, what we can do is analyze food habits across countries and obesity rates. We have run the regression on obesity level and different food types.")
     st.write("The results are presented below. You can notice that the adjusted R-squared is not very high, so there is a big part that remains unexplained. However, you can see the relationship between certain foods and obesity.")
-    st.write("Although we do not claim causal relationship here, the results are quite predictable: vegetables, coffee, tea are associated with higher obesity rates. ")
+    st.write("Important: no causal relationship is claimed, only correlation.")
     image = Image.open('https://github.com/5htplife/dataforexamen1/raw/main/obesity%20food%20reg.png')
     st.image(image, caption='Regression Results Food & Obesity')
-
+    st.write("We can have a closer look on the relationship between each food type and obesity.")
+    nutrition_gender = get_nutrition_gender()
+    def function_for_food_plots(A):
+        fig6, ax6 = plt.subplots()
+        sns.regplot(data = , x='Obesity', y=A, color='slateblue', marker='*', ax=ax6)
+        ax6.set(xlabel='Obesity (%)')
+        ax6.set_title('Correlation between Obesity and The Chosen Type of Food')
+        return st.pyplot(fig6)
+    list_of_products = ['Meat Products', 'Fish and Seafood', 'Alcoholic Beverages', 'Cereals - Excluding Beer', 'Eggs', 'Fruits - Excluding Wine', 'Milk - Excluding Butter', 'Pulses', 'Starchy Roots', 'Stimulants', 'Sugar & Sweeteners', 'Vegetables', 'Treenuts']
+    food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
+    for element in list_of_products:
+        if food_options == element:
+            function_for_food_plots(element)
+            correlation_food = stats.pearsonr([element], ['Obesity'])[0]
+            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
 
 
@@ -178,11 +192,6 @@ with st.echo(code_location="below"):
 
 
 
-
-
-
-
-    st.write("Now I suggest we analyze correlation between different types of food and obesity")
     def function_for_food_plots(A):
         fig6, ax6 = plt.subplots()
         sns.regplot(data = kcal_adj_sorted_by_undernourished, x='Obesity', y=A, color='slateblue', marker='*', ax=ax6)
