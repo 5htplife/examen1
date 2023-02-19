@@ -14,20 +14,20 @@ from PIL import Image
 
 
 with st.echo(code_location="below"):
-    @st.cache
+    @st.cache(allow_output_mutation=True)
     def get_excess_mortality():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
-    @st.cache
+    @st.cache(allow_output_mutation=True)
     def get_nutrition_percent():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_percent.csv")
-    @st.cache
+    @st.cache(allow_output_mutation=True)
     def get_nutrition_total():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_total.csv")
-    @st.cache
+    @st.cache(allow_output_mutation=True)
     def get_iso():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/iso.csv")
 
-    @st.cache
+    @st.cache(allow_output_mutation=True)
     def get_obesity_data():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
 
