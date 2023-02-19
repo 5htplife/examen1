@@ -205,7 +205,7 @@ with st.echo(code_location="below"):
     for element in micronutrients:
         if supplement_option == element:
             fig_nutrient_death = px.scatter(nutrition_and_covid, x = 'Excess deaths', y = element,
-                                            size = 'Excess deaths', color = 'Country', hover_name="Country", log_x = True)
+                                            size = element, color = 'Country', hover_name="Country", log_x = True)
             fig_nutrient_death.update_layout(title = 'Relationship between Excess Deaths and Micronutrient Levels in the World',
                                              xaxis=dict(
                                                  title='Excess deaths (log)',
