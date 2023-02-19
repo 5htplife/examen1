@@ -205,7 +205,7 @@ with st.echo(code_location="below"):
     for element in macronutrients:
         if macro_option == element:
             fig_macronutrient = px.scatter(nutrition_macro_female, x='Value', y=element,
-                                            size=element, color='Country', hover_name="Country")
+                                            size=element, color='Country Name', hover_name="Country Name")
             fig_macronutrient.update_layout(
                 title='Relationship between Obesity and Certain Macronutrient Intake for Women',
                 xaxis=dict(
