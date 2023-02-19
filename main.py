@@ -137,6 +137,7 @@ with st.echo(code_location="below"):
        'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
        'Total protein', 'Total carbohydrates', 'iso3']]
     nutrition_macro = nutrition_macro.merge(iso, how='inner', left_on = 'iso3', right_on = 'iso3c')
+    nutrition_macro
     countries_2 = nutrition_macro['country_name'].astype(str)
     country_options_2 = st.selectbox('Choose a country', countries_2)
     per_country_habits = nutrition_macro[nutrition_macro['country_name'] == country_options]
