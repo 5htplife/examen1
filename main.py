@@ -32,6 +32,9 @@ with st.echo(code_location="below"):
     @st.cache(allow_output_mutation=True)
     def get_obesity_data():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
+    @st.cache(allow_output_mutation=True)
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_covid.csv")
+
 
     st.set_page_config(
         page_title="COVID-19, Obesity and Food Habits",
@@ -186,34 +189,29 @@ with st.echo(code_location="below"):
             correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0]
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
+    st.write("## Dietary Habits and COVID-19")
 
-
-
-
-    st.write("Also, it is interesting to learn about micronutrient distribution in different countries.")
-    st.write("It is essential for further analysis of food habits and COVID-19 relationship because during COVID outbreak many doctors advised patients to take supplements such as vitamin C, vitamin B12, vitamin D, and zinc. There is anecdotal evidence that these supplements help immune system during COVID.")
-    country_options2 = st.selectbox('Choose a country', countries)
-
-
-
-
-    def function_for_food_plots(A):
-        fig6, ax6 = plt.subplots()
-        sns.regplot(data = kcal_adj_sorted_by_undernourished, x='Obesity', y=A, color='slateblue', marker='*', ax=ax6)
-        ax6.set(xlabel='Obesity (%)')
-        ax6.set_title('Correlation between Obesity and The Chosen Type of Food')
-        return st.pyplot(fig6)
-    list_of_products = ['Meat Products', 'Fish and Seafood', 'Alcoholic Beverages', 'Cereals - Excluding Beer', 'Eggs', 'Fruits - Excluding Wine', 'Milk - Excluding Butter', 'Pulses', 'Starchy Roots', 'Stimulants', 'Sugar & Sweeteners', 'Vegetables', 'Treenuts']
-    food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
-    for element in list_of_products:
-        if food_options == element:
-            function_for_food_plots(element)
-            correlation_food = stats.pearsonr([element], ['Obesity'])[0]
-            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
-    st.write("Therefore, we can conclude that fish and seafood, cereals (сomplex carbs), beans (pulses) and vegetables positively affect person's health because there is a negative correlation between them and obesity.")
-
-
-
+    st.write("The last step is to analyze whether there is any link with how people and the excess mortality in the country")
+    st.write("Although regression analysis didn't produce any robust results, it is still worth looking at some data.")
+    st.write("It is interesting to see how micronutrient distribution and excess mortality are related in different countries. During COVID outbreak many doctors advised patients to take supplements such as vitamin C, vitamin B12, vitamin D, and zinc. There is anecdotal evidence that these supplements help immune system during COVID.")
+    st.write("That is why we present a scatterplot with micronutrient values and excess mortality in the world")
+    micronutrients = ['Vitamin B9',
+       'Vitamin B3', 'Vitamin B2', 'Zinc', 'Vitamin E',
+       'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6', 'Vitamin A',
+       'Selenium', 'Potassium', 'Magnesium', 'Iron', 'Iodine', 'Calcium']
+    supplement_option = st.selectbox("Choose a micronutrient", micronutrients)
+    nutrition_and_covid = get_nutrition_and_covid()
+    for element in micronutrients:
+        if supplement_option == element:
+            fig_nutrient_death = px.scatter(nutrition_and_covid, x = 'Excess deaths', y = element,
+                                            size = 'Excess deaths', color = 'Country', hover_name="Country", log_x = True)
+            fig_nutrient_death.update_layout(title = 'Relationship between Excess Deaths and Micronutrient Levels in the World',
+                                             xaxis=dict(
+                                                 title='Excess deaths (log)',
+                                                 showgrid = False,
+                                             ), yaxis = dict(title='Micronutrient Level', showgrid = False)
+                                             )
+            st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
 
 
 
@@ -232,38 +230,12 @@ with st.echo(code_location="below"):
 
 
 
-    st.write("Let's look how obesity and COVID-19 rates are correlated around the globe")
-    kcal_covid = kcal_adj[['Obesity','Deaths', 'Confirmed']]
-    obesity_covid_correlation_options = st.selectbox('How do you prefer to view correlation?', ['Heatmap, please', 'I prefer multiple plots'])
-    if obesity_covid_correlation_options == 'I prefer multiple plots':
-        fig1, ax1 = plt.subplots()
-        sns.regplot(data=kcal_adj, x='Obesity', y='Deaths', color='darkolivegreen', marker='+', ax=ax1)
-        ax1.set(xlabel='Obesity (%)', ylabel='Death Rate (%)')
-        ax1.set_title('Correlation between Obesity and Death Rate')
-        st.pyplot(fig1)
-        fig2, ax2 = plt.subplots()
-        sns.regplot(data=kcal_adj, x='Obesity', y='Confirmed', color='cadetblue', marker='2', ax=ax2)
-        ax2.set(xlabel='Obesity (%)', ylabel='Confirmed Cases (%)')
-        ax2.set_title('Correlation between Obesity and Confirmed Cases')
-        st.pyplot(fig2)
-        fig3, ax3 = plt.subplots()
-        sns.regplot(data=kcal_adj, x='Obesity', y='Mortality', color='palevioletred', marker='x', ax=ax3)
-        ax3.set(xlabel='Obesity (%)', ylabel='Mortality Rate (%)')
-        ax3.set_title('Correlation between Obesity and Mortality Rate')
-        st.pyplot(fig3)
-    else:
-        corr_covid = kcal_covid.corr(method='pearson')
-        fig4, ax4 = plt.subplots()
-        sns.heatmap(corr_covid, annot=True, cmap='cubehelix', linewidths=.5)
-        ax4.set_title('Correlation Matrix for Obesity, Death Rate, Confirmed Cases, and Mortality Rate')
-        st.pyplot(fig4)
-    corr_obesity_death = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Deaths'])[0]
-    corr_obesity_confirmed = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Confirmed'])[0]
-    corr_obesity_mort = stats.pearsonr(kcal_covid['Obesity'], kcal_covid['Mortality'])[0]
-    st.write('Correlation between obesity and deaths is {:.2f}.'.format(corr_obesity_death))
-    st.write('Correlation between obesity and confirmed cases is {:.2f}.'.format(corr_obesity_confirmed))
-    st.write('Surprisingly, correlation between is obesity and mortality is very low, {:.2f}.'.format(corr_obesity_mort))
-    st.write('Notwithstanding the latter counterintuitive result, it is still very important to analyze the dietary habits so that we can protect ourselves from COVID-19 and other diseases')
+
+
+
+
+
+
 
 
     st.write("It might be interesting to analyze dietary habits of countries with the highest and lowest obesity and COVID-19 death levels. So let's check it")
@@ -356,35 +328,3 @@ with st.echo(code_location="below"):
     st.write("In the end, I would like to emphasize the importance of maintaining a healthy diet once again.")
     st.write("Obviously, obesity is linked to person's lifestyle: physical activity and food habits. While it is the truth universally acknowledged that unhealthy eating causes obesity, "
              "the whole issue concerning obesity may seem irrelevant and distant in the eye of the reader. Further, I'll try to persuade why this vision is erroneous.")
-    @st.cache
-    def get_obesity_data():
-        return pd.read_csv("https://github.com/5htplife/firstproject/raw/master/obesity-cleaned.csv")
-    obesity_data = get_obesity_data() #now we need to 'prettify' it a little bit
-    obesity_data_adj = obesity_data[obesity_data['Obesity (%)'] != 'No data']
-    obesity_data_adj = obesity_data_adj.replace({'Republic of Korea': 'Korea, South', "Democratic People's Republic of Korea": 'Korea, North', 'United Kingdom of Great Britain and Northern Ireland': 'United Kingdom'
-                                                    , 'Republic of North Macedonia':'North Macedonia', "Democratic Republic of the Congo": "Congo"
-                                                 , 'Viet Nam': 'Vietnam', 'Bolivia (Plurinational State of)': 'Bolivia'})
-    obesity_data_adj = obesity_data_adj.rename(columns={'Obesity (%)':'Obesity'})
-    obesity_data_adj['Obesity (%)'] = obesity_data_adj['Obesity'].str.extract('(\d+\.\d)').astype(float) #use regex to extract per cent of obesed people
-    obesity_data_adj = obesity_data_adj.drop(columns=['Obesity'])
-    obesity_data_merged = obesity_data_adj.merge(iso_adj, left_on='Country', right_on='Country', how="inner")
-    fig_obesity=px.choropleth(obesity_data_merged[obesity_data_merged['Sex'] == 'Both sexes'], locations='alpha-3', color='Obesity (%)',
-                            range_color = (0, 28), hover_name ='Country', hover_data=['Obesity (%)', 'Year'], color_continuous_scale="YlOrRd", animation_frame="Year", projection='equirectangular',
-                              animation_group='region', title='The Obesity Rate Around the Globe (1975-2016)', labels={'Obesity (%)': 'Obesity Rate (%)'})
-    st.plotly_chart(fig_obesity)
-    st.write('As you might notice, the developed world is getting more and more obesed (and Russia is not an exception). Obesity is dangerous because it can lead to serious diseases.')
-    st.write()
-    st.write('I want to analyze the gender patterns concerning obesity')
-    obesity_data_mean = obesity_data_adj.groupby(['Year', 'Sex']).mean().reset_index(level='Sex').reset_index(level='Year')
-    obesity_data_mean_adj = obesity_data_mean.drop(columns = obesity_data_mean.columns[2])
-    fig8, ax8 = plt.subplots()
-    sns.scatterplot(data=obesity_data_mean_adj, x='Year', y='Obesity (%)', hue = 'Sex',
-                    palette="cubehelix",
-                    style = 'Sex', markers=['o', '^', 'v'], ax=ax8)
-    ax8.set(ylabel='Obesity Rate, Average (%)')
-    ax8.legend(loc='center right', bbox_to_anchor=(1, .25), title=None)
-    ax8.set_title('The Average Obesity Rate by Gender (1975-2016)')
-    st.pyplot(fig8)
-    st.write('This finding may contribute to the answer as to why women are more into dieting than men are.')
-    st.write('Anyway, I hope this project was helpful and gave you some insights about health!')
-    st.write('### An ounce of prevention is worth a pound of cure')
