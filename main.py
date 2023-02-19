@@ -33,6 +33,7 @@ with st.echo(code_location="below"):
     def get_obesity_data():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
     @st.cache(allow_output_mutation=True)
+    def get_nutrition_and_covid():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_covid.csv")
 
 
