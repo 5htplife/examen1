@@ -143,7 +143,7 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity[obesity['Year'] == 2016)
+    obesity = obesity[obesity['Year'] == 2016]
     if gender_option == 'Female':
         obesity_female = obesity[obesity['Indicator Name'] == 'Female']
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
