@@ -183,7 +183,7 @@ with st.echo(code_location="below"):
     for element in list_of_products:
         if food_options == element:
             function_for_food_plots(element)
-            correlation_food = stats.pearsonr([element], ['Value'])[0]
+            correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0]
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
 
