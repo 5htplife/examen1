@@ -151,7 +151,7 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity[obesity['Year'] > 1999]
+    obesity = obesity[obesity['Year'] == 2016]
     obesity_female = obesity[obesity['Indicator Name'] == 'Female']
     obesity_male = obesity[obesity['Indicator Name'] == 'Male']
     if gender_option == 'Female':
