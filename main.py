@@ -27,8 +27,8 @@ with st.echo(code_location="below"):
     def get_iso():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/iso.csv")
     @st.cache(allow_output_mutation=True)
-    def get_nutrition_by_gender():
-        return pd.read_csv("")
+    def get_nutrition_obesity_by_gender():
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_obesity_food_reg.csv")
     @st.cache(allow_output_mutation=True)
     def get_obesity_data():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/Prevalence%20of%20obesity%20(%25%20of%20population%20ages%2018%2B).csv")
@@ -166,19 +166,19 @@ with st.echo(code_location="below"):
     image = Image.open('https://github.com/5htplife/dataforexamen1/raw/main/obesity%20food%20reg.png')
     st.image(image, caption='Regression Results Food & Obesity')
     st.write("We can have a closer look on the relationship between each food type and obesity.")
-    nutrition_gender = get_nutrition_gender()
+    nutrition_obesity = get_nutrition_obesity_by_gender()
     def function_for_food_plots(A):
         fig6, ax6 = plt.subplots()
-        sns.regplot(data = , x='Obesity', y=A, color='slateblue', marker='*', ax=ax6)
+        sns.regplot(data = nutrition_obesity, x='Value', y=A, color='blue', marker='*', ax=ax6)
         ax6.set(xlabel='Obesity (%)')
-        ax6.set_title('Correlation between Obesity and The Chosen Type of Food')
+        ax6.set_title('Correlation between Obesity and The Chosen Food Type')
         return st.pyplot(fig6)
-    list_of_products = ['Meat Products', 'Fish and Seafood', 'Alcoholic Beverages', 'Cereals - Excluding Beer', 'Eggs', 'Fruits - Excluding Wine', 'Milk - Excluding Butter', 'Pulses', 'Starchy Roots', 'Stimulants', 'Sugar & Sweeteners', 'Vegetables', 'Treenuts']
+    list_of_products = ['tea', 'coffee', 'fruit juices', 'sugary beverages', 'yogurt', 'cheese', 'eggs', 'seafood', 'red meat', 'processed meat', 'whole grains', 'refined grains', 'nuts and seeds', 'beans and legumes', 'potatoes', 'non starchy vegetables', 'fruits']
     food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
     for element in list_of_products:
         if food_options == element:
             function_for_food_plots(element)
-            correlation_food = stats.pearsonr([element], ['Obesity'])[0]
+            correlation_food = stats.pearsonr([element], ['Value'])[0]
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
 
