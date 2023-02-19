@@ -199,7 +199,7 @@ with st.echo(code_location="below"):
     macronutrients = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat', 'Seafood omega-3 fat',
          'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
          'Total protein', 'Total carbohydrates']
-    st.write("For women around the world:")
+    st.write("The analysis below is performed based on female values around the world:")
     macro_option = st.selectbox("Choose a macronutrient", macronutrients)
     nutrition_macro_female = nutrition_macro[nutrition_macro['female'] == 1]
     for element in macronutrients:
@@ -219,20 +219,7 @@ with st.echo(code_location="below"):
                       'Seafood omega-3 fat',
                       'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
                       'Total protein', 'Total carbohydrates']
-    macro_option2 = st.selectbox("Choose a macronutrient", macronutrients2)
-    nutrition_macro_male = nutrition_macro[nutrition_macro['female'] == 0]
-    for element in macronutrients2:
-        if macro_option2 == element:
-            fig_macronutrient2 = px.scatter(nutrition_macro_male, x='Value', y=element,
-                                           size=element, color='Country Name', hover_name="Country Name")
-            fig_macronutrient2.update_layout(
-                title='Relationship between Obesity and Certain Macronutrient Intake for Men',
-                xaxis=dict(
-                    title='Obesity Rate (%)',
-                    showgrid=False,
-                ), yaxis=dict(title='Macronutrient Level', showgrid=False)
-            )
-            st.plotly_chart(fig_macronutrient2, height=800, width=800)
+
     st.write('If you were interested in the average numbers around the world, then this information is for you:')
     st.write('On average, people consume', nutrition_macro['Dietary Sodium'].mean(), 'mg of dietary sodium per day.')
     st.write('People get', nutrition_macro['Added sugars'].mean(), '% of total calorie intake by eating added sugars.')
