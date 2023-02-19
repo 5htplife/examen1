@@ -163,7 +163,7 @@ with st.echo(code_location="below"):
     st.write("Yet, what we can do is analyze food habits across countries and obesity rates. We have run the regression on obesity level and different food types.")
     st.write("The results are presented below. You can notice that the adjusted R-squared is not very high, so there is a big part that remains unexplained. However, you can see the relationship between certain foods and obesity.")
     st.write("Important: no causal relationship is claimed, only correlation.")
-    image = Image.open('/Users/irina/PycharmProjects/pythonProject/obesity food reg.png')
+    image = Image.open('obesity food reg.png')
     st.image(image, caption='Regression Results Food & Obesity')
     st.write("We can have a closer look on the relationship between each food type and obesity.")
     nutrition_obesity = get_nutrition_obesity_by_gender()
