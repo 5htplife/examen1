@@ -151,14 +151,14 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
+    obesity_female = obesity[obesity['Indicator Name'] == 'Female']
+    obesity_male = obesity[obesity['Indicator Name'] == 'Male']
     if gender_option == 'Female':
-        obesity_female = obesity[obesity['Indicator Name'] == 'Female']
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
                              hover_name="Country Name", size="Value", animation_frame="Year",
                              projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
-        obesity_male = obesity[obesity['Indicator Name'] == 'Male']
         fig_obesity = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
                                      hover_name="Country Name", size="Value", animation_frame="Year",
                                      projection="natural earth")
