@@ -139,9 +139,6 @@ with st.echo(code_location="below"):
 
     st.write("Undoubtedly, nutrition patterns are linked to physical health and especially obesity levels across countries.")
     st.write("Let's look how obesity rates changed throughout the years in the world.")
-
-    gender_option = st.selectbox('Choose gender:', ['Female', 'Male'])
-
     obesity = get_obesity_data()
     obesity['Indicator Name'] = np.where(
         (obesity['Indicator Name'] == 'Prevalence of obesity, female (% of female population ages 18+)'), 'Female',
@@ -151,18 +148,19 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
+
     obesity_female = obesity[obesity['Indicator Name'] == 'Female']
     obesity_male = obesity[obesity['Indicator Name'] == 'Male']
-    if gender_option == 'Female':
-        fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
+    st.write("For women:")
+    fig_obesity_female = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
                              hover_name="Country Name", size="Value", animation_frame="Year",
                              projection="natural earth")
-        st.plotly_chart(fig_obesity, width=800, height=800)
-    else:
-        fig_obesity = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
+    st.plotly_chart(fig_obesity_female, width=800, height=800)
+    st.write("For men:")
+    fig_obesity_male = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
                                      hover_name="Country Name", size="Value", animation_frame="Year",
                                      projection="natural earth")
-        st.plotly_chart(fig_obesity, width=800, height=800)
+    st.plotly_chart(fig_obesity_male, width=800, height=800)
 
     st.write("Obesity is a serious problem nowadays. From the plot above you can see that it wasn't as drastic even half a century ago.")
     st.write("The natural question that occurs is: what to eat to prevent obesity?")
