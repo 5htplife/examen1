@@ -141,6 +141,7 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
+    obesity = obesity.sort_values(by=['Year'], ascending=True)
     if gender_option == 'Female':
         obesity_female = obesity[obesity['Indicator Name'] == 'Female']
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
@@ -155,6 +156,17 @@ with st.echo(code_location="below"):
                                      animation_frame="Year",
                                      projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
+
+    st.write("Obesity is a serious problem nowadays. From the plot above you can see that it wasn't as drastic even half a century ago.")
+    st.write("The natural question that occurs is: what to eat to prevent obesity?")
+    st.write("This is the question that a lot of medical scientists are concerned wit, and our project certainly can't offer any certain answer to it. ")
+    st.write("Yet, what we can do is analyze food habits across countries and obesity rates. We have run the regression on obesity level and different food types.")
+    st.write("The results are presented below. You can notice that the adjusted R-squared is not very high, so there is a big part that remains unexplained. However, you can see the relationship between certain foods and obesity.")
+    st.write("Although we do not claim causal relationship here, the results are quite predictable: vegetables, coffee, tea are associated with higher obesity rates. ")
+    image = Image.open('https://github.com/5htplife/dataforexamen1/raw/main/obesity%20food%20reg.png')
+    st.image(image, caption='Regression Results Food & Obesity')
+
+
 
 
 
