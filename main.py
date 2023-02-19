@@ -220,7 +220,7 @@ with st.echo(code_location="below"):
     for element in macronutrients:
         if macro_option2 == element:
             fig_macronutrient2 = px.scatter(nutrition_macro_male, x='Value', y=element,
-                                           size=element, color='Country', hover_name="Country")
+                                           size=element, color='Country Name', hover_name="Country Name")
             fig_macronutrient2.update_layout(
                 title='Relationship between Obesity and Certain Macronutrient Intake for Men',
                 xaxis=dict(
@@ -229,10 +229,15 @@ with st.echo(code_location="below"):
                 ), yaxis=dict(title='Macronutrient Level', showgrid=False)
             )
             st.plotly_chart(fig_macronutrient2, height=800, width=800)
-
-
-
-
+    st.write('If you were interested in the average numbers around the world, then this information is for you:')
+    st.write('On average, people consume', nutrition_macro['Dietary Sodium'].mean(), 'mg of dietary sodium per day.')
+    st.write('People get', nutrition_macro['Added sugars'].mean(), '% of total calorie intake by eating added sugars.')
+    st.write('The average amount of dietary fiber is', nutrition_macro['Dietary fibe'].mean(), 'grams per day.')
+    st.write('Usually people get', nutrition_macro['Saturated fat'].mean(), '% of total daily calorie intake by consuming saturated fats.')
+    st.write('At the same time, protein mean value is', nutrition_macro['Total protein'].mean(), 'grams per day.')
+    st.write('Finally, on average we get', nutrition_macro['Total carbohydrates'].mean(), 'by eating carbs.')
+    st.write("Let's compare these values with the values for top-10 cohorts with the highest obesity rate.")
+    st.write(nutrition_macro.sort_values(by = 'Value', ascending = False)[:10].drop(columns = ['female', 'Value']).mean())
 
 
     st.write("## Dietary Habits and COVID-19")
@@ -258,7 +263,6 @@ with st.echo(code_location="below"):
                                              ), yaxis = dict(title='Micronutrient Level', showgrid = False)
                                              )
             st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
-
 
 
 
