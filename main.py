@@ -37,7 +37,7 @@ with st.echo(code_location="below"):
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_covid.csv")
     @st.cache(allow_output_mutation=True)
     def get_macronutrition_and_obesity():
-        return pd.read_csv("https://github.com/5htplife/dataforexamen1/blob/main/nutrition_and_obesity_macro.csv")
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_obesity_macro.csv")
 
 
     st.set_page_config(
