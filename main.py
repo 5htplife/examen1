@@ -35,6 +35,9 @@ with st.echo(code_location="below"):
     @st.cache(allow_output_mutation=True)
     def get_nutrition_and_covid():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_covid.csv")
+    @st.cache(allow_output_mutation=True)
+    def get_macronutrition_and_obesity():
+        return pd.read_csv("https://github.com/5htplife/dataforexamen1/blob/main/nutrition_and_obesity_macro.csv")
 
 
     st.set_page_config(
@@ -131,22 +134,6 @@ with st.echo(code_location="below"):
                                         title='Food Habits in the Country')
     st.plotly_chart(fig_nutrition_each_country)
 
-    st.write("Also, it is worth looking at macronutrient component of dietary habits of people across the globe.")
-    nutrition_total = get_nutrition_total()
-    nutrition_macro = nutrition_total[['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat', 'Seafood omega-3 fat',
-       'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
-       'Total protein', 'Total carbohydrates', 'iso3']]
-    nutrition_macro = nutrition_macro.merge(iso, how='inner', left_on = 'iso3', right_on = 'iso3c')
-    nutrition_macro
-    countries_2 = nutrition_macro['country_name'].astype(str)
-    country_options_2 = st.selectbox('Choose a country', countries_2)
-    per_country_habits = nutrition_macro[nutrition_macro['country_name'] == country_options]
-    nutrition_macro
-
-
-
-
-
 
     st.write("### Obesity")
 
@@ -164,17 +151,16 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity[obesity['Year'] == 2016]
     if gender_option == 'Female':
         obesity_female = obesity[obesity['Indicator Name'] == 'Female']
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
-                             hover_name="Country Name", size="Value",
+                             hover_name="Country Name", size="Value", animation_frame="Year",
                              projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
         obesity_male = obesity[obesity['Indicator Name'] == 'Male']
         fig_obesity = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
-                                     hover_name="Country Name", size="Value",
+                                     hover_name="Country Name", size="Value", animation_frame="Year",
                                      projection="natural earth")
         st.plotly_chart(fig_obesity, width=800, height=800)
 
@@ -206,6 +192,47 @@ with st.echo(code_location="below"):
             function_for_food_plots(element)
             correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0]
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
+
+    st.write('Besides, it may be interesting to look at the relationship between macronutrients and obesity.')
+    nutrition_macro = get_macronutrition_and_obesity()
+    macronutrients = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat', 'Seafood omega-3 fat',
+         'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
+         'Total protein', 'Total carbohydrates']
+    st.write("For women around the world:")
+    macro_option = st.selectbox("Choose a macronutrient", macronutrients)
+    nutrition_macro_female = nutrition_macro[nutrition_macro['female'] == 1]
+    for element in macronutrients:
+        if macro_option == element:
+            fig_macronutrient = px.scatter(nutrition_macro_female, x='Value', y=element,
+                                            size=element, color='Country', hover_name="Country")
+            fig_macronutrient.update_layout(
+                title='Relationship between Obesity and Certain Macronutrient Intake for Women',
+                xaxis=dict(
+                    title='Obesity Rate (%)',
+                    showgrid=False,
+                ), yaxis=dict(title='Macronutrient Level', showgrid=False)
+                )
+            st.plotly_chart(fig_macronutrient, height=800, width=800)
+    st.write("For men around the world:")
+    macro_option2 = st.selectbox("Choose a macronutrient", macronutrients)
+    nutrition_macro_male = nutrition_macro[nutrition_macro['female'] == 0]
+    for element in macronutrients:
+        if macro_option2 == element:
+            fig_macronutrient2 = px.scatter(nutrition_macro_male, x='Value', y=element,
+                                           size=element, color='Country', hover_name="Country")
+            fig_macronutrient2.update_layout(
+                title='Relationship between Obesity and Certain Macronutrient Intake for Men',
+                xaxis=dict(
+                    title='Obesity Rate (%)',
+                    showgrid=False,
+                ), yaxis=dict(title='Macronutrient Level', showgrid=False)
+            )
+            st.plotly_chart(fig_macronutrient2, height=800, width=800)
+
+
+
+
+
 
     st.write("## Dietary Habits and COVID-19")
 
