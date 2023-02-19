@@ -131,6 +131,22 @@ with st.echo(code_location="below"):
                                         title='Food Habits in the Country')
     st.plotly_chart(fig_nutrition_each_country)
 
+    st.write("Also, it is worth looking at macronutrient component of dietary habits of people across the globe.")
+    nutrition_total = get_nutrition_total()
+    nutrition_macro = nutrition_total[['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat', 'Seafood omega-3 fat',
+       'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
+       'Total protein', 'Total carbohydrates', 'iso3']]
+    nutrition_macro = nutrition_macro.merge(iso, how='inner', left_on = 'iso3', right_on = 'iso3c')
+    countries_2 = nutrition_macro['country_name'].astype(str)
+    country_options_2 = st.selectbox('Choose a country', countries)
+    per_country_habits = nutrition_macro[nutrition_macro['country_name'] == country_options]
+    nutrition_macro
+
+
+
+
+
+
     st.write("### Obesity")
 
     st.write("Undoubtedly, nutrition patterns are linked to physical health and especially obesity levels across countries.")
@@ -209,7 +225,7 @@ with st.echo(code_location="below"):
             fig_nutrient_death.update_layout(title = 'Relationship between Excess Deaths and Micronutrient Levels in the World',
                                              xaxis=dict(
                                                  title='Excess deaths (log)',
-                                                 showgrid = False,
+                                                 showgrid = False, type = 'log'
                                              ), yaxis = dict(title='Micronutrient Level', showgrid = False)
                                              )
             st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
@@ -222,110 +238,3 @@ with st.echo(code_location="below"):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    st.write("It might be interesting to analyze dietary habits of countries with the highest and lowest obesity and COVID-19 death levels. So let's check it")
-    meat_products = kcal_adj['Animal fats'] + kcal_adj['Meat'] + kcal_adj['Offals'] #I combine them because it's easier to assess this group together
-    seafood = kcal_adj['Aquatic Products, Other'] + kcal_adj['Fish, Seafood'] #I do it for the same reason
-    kcal_adj['Meat Products'] = meat_products
-    kcal_adj['Fish and Seafood'] = seafood
-    high_death_rate = (kcal_adj.sort_values('Deaths', ascending=False).head(10)
-        .drop(columns=['Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                       )
-    high_obesity_rate = (kcal_adj.sort_values('Obesity', ascending=False).head(10)
-        .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                         )
-    low_death_rate = (kcal_adj.sort_values('Deaths', ascending=True).head(10)
-        .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                      )
-    low_obesity_rate = (kcal_adj.sort_values('Obesity', ascending=True).head(10)
-        .drop(columns=['Country', 'Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products', 'Miscellaneous', 'Oilcrops', 'Spices', 'Sugar Crops', 'Vegetal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                        )
-    def food_obesity_death(df):
-        df1 = df.mean()
-        df2 = df1.reset_index(level=0)
-        df2.columns=["type of food", "per cent of intake"]
-        high_deaths = alt.Chart(df2).mark_bar().encode(x=alt.X('per cent of intake', scale=alt.Scale(domain=[0,30])),
-                                                                               y='type of food'
-                                                       , color=alt.Color('type of food', scale=alt.Scale(scheme='Category20')))
-        return st.altair_chart(high_deaths, use_container_width=True)
-    st.write('In the following 4 plots I use the average intakes of different types of food in the corresponding groups of countries.')
-    st.write('### Top-10 countries with the highest COVID death rate, Average Food Habits')
-    food_obesity_death(high_death_rate)
-    st.write('### Top-10 countries with the lowest COVID death rate,  Average Food Habits')
-    food_obesity_death(low_death_rate)
-    st.write("### Top-10 countries with the highest obesity rate,  Average Food Habits")
-    food_obesity_death(high_obesity_rate)
-    st.write('### Top-10 countries with the lowest obesity rate,  Average Food Habits')
-    food_obesity_death(low_obesity_rate)
-    st.write("It seems that in countries with the least death and obesity rates people consume more cereals, starchy roots and beans (perhaps, healthy carbs), and they consume much less of other types of food, including conventionally unhealthy ones: alcohol, sugar, meat, and dairy")
-    st.write("## Obesity and Food Habits")
-    st.write("The results we've seen are interesting, but in top-10 least obesed countries, there may be a high rate of undernourishment, as well.")
-    st.write("Thus, I'll try to limit the effect of this factor by sampling only those countries where the undernourishment rate is below average.")
-    st.write('Although it does not totally reduce the undernourishment effect, it certainly is more representative.')
-    st.write("Also, I use a different type of plot because it may be interesting to analyse not the average numbers but each of top-10 obesed/least obesed country's consumption habits.")
-    kcal_adj['Undernourished'] = kcal_adj['Undernourished'].replace('<2.5','2.5')
-    kcal_adj['Undernourished'] = kcal_adj["Undernourished"].astype(float)
-    kcal_adj_sorted_by_undernourished = kcal_adj[kcal_adj['Undernourished'] < kcal_adj['Undernourished'].mean()]
-    high_obesity = (kcal_adj_sorted_by_undernourished.sort_values('Obesity', ascending=False).head(10)
-        .drop(columns=['Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', "Vegetal Products",'Animal Products', 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                         ).replace({'United States of America': 'USA'}) #I get rid of Vegetal Products because they combine things listed in other food categories, thus, I don't need it (check description dataset if needed). Also, I change for USA for shorter width of y-label.
-    low_obesity = (kcal_adj_sorted_by_undernourished.sort_values('Obesity', ascending=True).head(10)
-        .drop(columns=['Obesity', 'Undernourished', 'Confirmed', 'Deaths', 'Recovered', 'Population', 'Mortality', 'Animal Products',"Vegetal Products", 'Animal fats', 'Meat', 'Offals', 'Aquatic Products, Other', 'Fish, Seafood'])
-                         ) #I get rid of Vegetal Products because they combine things listed in other food categories, thus, I don't need it (check description dataset if needed)
-    high_obesity_melted=high_obesity.melt(id_vars="Country", var_name="Food")
-    high_obesity_melted["value"] = high_obesity_melted["value"] * 2 #I multiply because Vegetal Products (which I get rid of) constitute 50% of consumption
-    low_obesity_melted = low_obesity.melt(id_vars="Country", var_name="Food")
-    low_obesity_melted["value"] = low_obesity_melted["value"] * 2
-    high_obesity_chart = alt.Chart(high_obesity_melted, title='Food Habits of top-10 Most Obesed countries').mark_bar().encode(
-        x=alt.X('sum(value)',  title='Total Consumption by Categories (%)', scale=alt.Scale(domain=[0, 100])),
-            y='Country',
-                color=alt.Color('Food', scale=alt.Scale(scheme='category20'), legend=alt.Legend(title="Food Categories")),
-                    order=alt.Order('Food', sort='ascending')).configure_title(fontSize=20)
-    st.altair_chart(high_obesity_chart, use_container_width=True)
-    low_obesity_chart = alt.Chart(low_obesity_melted, title='Food Habits of Top-10 Least Obesed Countries').mark_bar().encode(
-        x=alt.X('sum(value)', title='Total Consumption by Categories (%)', scale=alt.Scale(domain=[0,100])),
-            y='Country',
-                color=alt.Color('Food', scale=alt.Scale(scheme = 'category20'), legend=alt.Legend(title="Food Categories")),
-                    order=alt.Order('Food',sort='ascending')).configure_title(fontSize=20)
-    st.altair_chart(low_obesity_chart, use_container_width=True)
-    st.write('Still, I want to show the overview, so I will use the same type of plot as before for generalisation.')
-    st.write('### Average Food Habits of top-10 Most Obesed countries')
-    food_obesity_death(high_obesity)
-    st.write("### Average Food Habits of top-10 Least Obesed countries")
-    food_obesity_death(low_obesity)
-    st.write("The general pattern remains the same: in the least obesed countries people consume much more cereals, starchy roots (both are healthy, complex carbs) and slightly more vegetables and fish, while consuming much less of other types of food compared to the most obesed countries.")
-    st.write("Now I suggest we analyze correlation between different types of food and obesity")
-    def function_for_food_plots(A):
-        fig6, ax6 = plt.subplots()
-        sns.regplot(data = kcal_adj_sorted_by_undernourished, x='Obesity', y=A, color='slateblue', marker='*', ax=ax6)
-        ax6.set(xlabel='Obesity (%)')
-        ax6.set_title('Correlation between Obesity and The Chosen Type of Food')
-        return st.pyplot(fig6)
-    list_of_products = ['Meat Products', 'Fish and Seafood', 'Alcoholic Beverages', 'Cereals - Excluding Beer', 'Eggs', 'Fruits - Excluding Wine', 'Milk - Excluding Butter', 'Pulses', 'Starchy Roots', 'Stimulants', 'Sugar & Sweeteners', 'Vegetables', 'Treenuts']
-    food_options = st.selectbox("Choose a type of food you're interested in", list_of_products)
-    for element in list_of_products:
-        if food_options == element:
-            function_for_food_plots(element)
-            correlation_food = stats.pearsonr(kcal_adj_sorted_by_undernourished[element], kcal_adj_sorted_by_undernourished['Obesity'])[0]
-            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
-    st.write("Therefore, we can conclude that fish and seafood, cereals (сomplex carbs), beans (pulses) and vegetables positively affect person's health because there is a negative correlation between them and obesity.")
-    st.write("## Remark")
-    st.write("In the end, I would like to emphasize the importance of maintaining a healthy diet once again.")
-    st.write("Obviously, obesity is linked to person's lifestyle: physical activity and food habits. While it is the truth universally acknowledged that unhealthy eating causes obesity, "
-             "the whole issue concerning obesity may seem irrelevant and distant in the eye of the reader. Further, I'll try to persuade why this vision is erroneous.")
