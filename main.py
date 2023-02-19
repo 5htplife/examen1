@@ -215,9 +215,13 @@ with st.echo(code_location="below"):
                 )
             st.plotly_chart(fig_macronutrient, height=800, width=800)
     st.write("For men around the world:")
-    macro_option2 = st.selectbox("Choose a macronutrient", macronutrients)
+    macronutrients2 = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat',
+                      'Seafood omega-3 fat',
+                      'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
+                      'Total protein', 'Total carbohydrates']
+    macro_option2 = st.selectbox("Choose a macronutrient", macronutrients2)
     nutrition_macro_male = nutrition_macro[nutrition_macro['female'] == 0]
-    for element in macronutrients:
+    for element in macronutrients2:
         if macro_option2 == element:
             fig_macronutrient2 = px.scatter(nutrition_macro_male, x='Value', y=element,
                                            size=element, color='Country Name', hover_name="Country Name")
