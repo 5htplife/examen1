@@ -107,7 +107,7 @@ with st.echo(code_location="below"):
     if gender_option == 'Female':
         fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
                                      hover_name="Country Name", size="Value",
-                                     projection="natural earth")#animation_frame="year")
+                                     projection="natural earth", animation_frame="Year")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
         fig_obesity2 = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
