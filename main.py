@@ -104,9 +104,10 @@ with st.echo(code_location="below"):
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
     obesity = obesity[obesity['Year'] == 2016]
-    obesity_top10 = obesity.sort_values(by = 'Value', ascending = False)[:10]
-    obesity_female = obesity_top10[obesity_top10['Indicator Name'] == 'Female']
-    obesity_male = obesity_top10[obesity_top10['Indicator Name'] == 'Male']
+    obesity_female = obesity[obesity['Indicator Name'] == 'Female']
+    obesity_female = obesity_female.sort_values(by = 'Value', ascending = False)[:10]
+    obesity_male = obesity[obesity['Indicator Name'] == 'Male']
+    obesity_male = obesity_male.sort_values(by='Value', ascending=False)[:10]
     if gender_option == 'Female':
         fig_obesity = px.bar(obesity_female, y="Value", x="Country Name",
                                      hover_name="Country Name",
@@ -122,7 +123,7 @@ with st.echo(code_location="below"):
                                      text_auto='.2s', title="Obesity rates among men in top-10 obesed countries")
         fig_obesity2.update_traces(textfont_size=12, textangle=0
                                    , textposition="outside", cliponaxis=False)
-        fig_obesity2.update_yaxes(range=[0, 100], title = "Obesity Rate (%)")
+        fig_obesity2.update_yaxes(range=[0, 100], title = "Obesity Rate (%)",)
 
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
