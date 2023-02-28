@@ -38,6 +38,9 @@ with st.echo(code_location="below"):
     @st.cache(allow_output_mutation=True)
     def get_macronutrition_and_obesity():
         return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_and_obesity_macro.csv")
+    @st.cache(allow_output_mutation=True)
+    def get_obesity_dynamic():
+        return pd.read_csv("")
 
 
     st.set_page_config(
@@ -57,7 +60,7 @@ with st.echo(code_location="below"):
     st.markdown('# Food Habits')
     st.write("Today more and more attention is brought to what people should eat for general health and longevity (see this [link](https://www.youtube.com/watch?v=n9IxomBusuw)).")
     st.write("A lot of renowned scientists urge people to consume more plant-based, less sugary food. Unfortunately, according to Gonzalez-Monroy (2021), food habits during COVID-19 changed drastically: people started opting for more starchy, high-carb foods rather than fiber-rich food such as fruit and vegetables. Such dietary patterns have been proven to worsen health in the long-run so people should be incentivised to reverse this trend. This project aims to offer an insight in aggregate food habits of people in 122 countries, link it to obesity, as well as provide some insights about COVID-19.")
-    st.write("The project consists of 4 parts: first, we are going to have a look at dietary habits; second, we will establish relationship between diet and obesity, third, we will provide insights in COVID-19 situation, and finally, we will look at how certain micronutrients are related to COVID-19.")
+    st.write("This project aims to offer insights about dietary habits to incentivize people maintain health. Also, we provide information about COVID-19 to see how the situation differs across countries. ")
     st.write("## Dietary Habits arounnd the World")
     st.write('We obtain data from Global Dietary Database where dietary patterns of 185 countries are listed. First, we offer insights in the consumption of certain types of food by country. It is interesting to learn what food types people prefer across the globe.')
     nutrition_percent = get_nutrition_percent()
@@ -87,7 +90,7 @@ with st.echo(code_location="below"):
 
     st.write(
         "Undoubtedly, nutrition patterns are linked to physical health and especially obesity levels across countries.")
-    st.write("Let's look how obesity rates changed throughout the years in the world.")
+    st.write("Let's look at the obesity levels at top-10 obesed countries")
 
     gender_option = st.selectbox('Choose gender:', ['Female', 'Male'])
 
@@ -100,19 +103,19 @@ with st.echo(code_location="below"):
         obesity['Indicator Name'])
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
     obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity[(obesity['Year'] >= 2000) & (obesity['Year'] <= 2016)]
-    obesity_female = obesity[obesity['Indicator Name'] == 'Female']
-    obesity_male = obesity[obesity['Indicator Name'] == 'Male']
-    obesity_female
+    obesity = obesity[obesity['Year'] == 2016]
+    obesity_top10 = obesity.sort_values(by = 'Value', ascending = False)[:10]
+    obesity_female = obesity_top10[obesity_top10['Indicator Name'] == 'Female']
+    obesity_male = obesity_top10[obesity_top10['Indicator Name'] == 'Male']
     if gender_option == 'Female':
-        fig_obesity = px.scatter_geo(obesity_female, locations="Country Code", color="Country Name",
+        fig_obesity = px.bar(obesity_female, y="Value", x="Country Name",
                                      hover_name="Country Name", size="Value",
-                                     projection="natural earth", animation_frame="Year")
+                                     text_auto='.2s', title="Obesity rates among women in top-10 obesed countries")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
-        fig_obesity2 = px.scatter_geo(obesity_male, locations="Country Code", color="Country Name",
-                                      hover_name="Country Name", size="Value",
-                                      projection="natural earth")
+        fig_obesity2 = px.bar(obesity_male, y="Value", x="Country Name",
+                                     hover_name="Country Name", size="Value",
+                                     text_auto='.2s', title="Obesity rates among men in top-10 obesed countries")
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
     st.write(
