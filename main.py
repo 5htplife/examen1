@@ -109,12 +109,12 @@ with st.echo(code_location="below"):
     obesity_male = obesity_top10[obesity_top10['Indicator Name'] == 'Male']
     if gender_option == 'Female':
         fig_obesity = px.bar(obesity_female, y="Value", x="Country Name",
-                                     hover_name="Country Name", size="Value",
+                                     hover_name="Country Name",
                                      text_auto='.2s', title="Obesity rates among women in top-10 obesed countries")
         st.plotly_chart(fig_obesity, width=800, height=800)
     else:
         fig_obesity2 = px.bar(obesity_male, y="Value", x="Country Name",
-                                     hover_name="Country Name", size="Value",
+                                     hover_name="Country Name",
                                      text_auto='.2s', title="Obesity rates among men in top-10 obesed countries")
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
