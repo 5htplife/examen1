@@ -213,12 +213,11 @@ with st.echo(code_location="below"):
              'grams per day.')
     st.write('Finally, on average we get {:.2f}'.format(nutrition_macro['Total carbohydrates'].mean()),
              'by eating carbs.')
-    st.write("Let's compare these values with the values for top-10 cohorts with the highest obesity rate.")
-    st.write(nutrition_macro.sort_values(by='Value', ascending=False)[:10].drop(columns=['female', 'Value']).mean())
+
+    st.write("We see that such nutrients as saturated fats and added sugars are positively linked with obesity, while carbs are negatively correlated.")
 
 
-
-
+    st.write("### COVID-19")
 
 
 
@@ -267,15 +266,10 @@ with st.echo(code_location="below"):
         st.plotly_chart(fig_bar_undercount, width=800, height=600)
 
     st.write("Interesting, although not surprising observation from the chart above is that the highest undercount ratio is in the less developed countries such as Tajikistan, Nicaragua, and Uzbekistan.")
-    st.write("We will focus on excess deaths alone, as it is the most appropriate metric for the relationship we want to look at.")
-
-
-
-
 
     st.write("## Dietary Habits and COVID-19")
 
-    st.write("The last step is to analyze whether there is any link with how people and the excess mortality in the country")
+    st.write("The last step is to analyze whether there is any link with how people and the excess mortality in the country. Doing so, we focus solely on excess deaths.")
     st.write("Although regression analysis didn't produce any robust results, it is still worth looking at some data.")
     st.write("It is interesting to see how micronutrient distribution and excess mortality are related in different countries. During COVID outbreak many doctors advised patients to take supplements such as vitamin C, vitamin B12, vitamin D, and zinc. There is anecdotal evidence that these supplements help immune system during COVID.")
     st.write("That is why we present a scatterplot with micronutrient values and excess mortality in the world")
@@ -296,6 +290,47 @@ with st.echo(code_location="below"):
                                              ), yaxis = dict(title='Micronutrient Level', showgrid = False)
                                              )
             st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
+
+    st.write("Finally, let's look at whether in the countries with the biggest excess mortality people lack certain elements.")
+    nutrition_and_micro = nutrition_and_covid[['Vitamin B3', 'Zinc', 'Vitamin E',
+       'Vitamin D', 'Vitamin C', 'Vitamin B6', 'Vitamin A',
+       'Selenium', 'Magnesium', 'Iron', 'Iodine', 'Calcium', 'Excess deaths']]
+    nutrition_and_micro['Vitamin B3 diff'] = nutrition_and_micro['Vitamin B3'] - 15
+    nutrition_and_micro['Zinc diff'] = nutrition_and_micro['Zinc'] - 10
+    nutrition_and_micro['Vitamin E diff'] = nutrition_and_micro['Vitamin E'] - 15
+    nutrition_and_micro['Vitamin D diff'] = nutrition_and_micro['Vitamin D'] - 15
+    nutrition_and_micro['Vitamin C diff'] = nutrition_and_micro['Vitamin C'] - 85
+    nutrition_and_micro['Vitamin B6 diff'] = nutrition_and_micro['Vitamin B6'] - 1.3
+    nutrition_and_micro['Vitamin A diff'] = nutrition_and_micro['Vitamin A'] - 800
+    nutrition_and_micro['Selenium diff'] = nutrition_and_micro['Selenium'] - 55
+    nutrition_and_micro['Magnesium diff'] = nutrition_and_micro['Magnesium'] - 5
+    nutrition_and_micro['Iron diff'] = nutrition_and_micro['Iron'] - 13
+    nutrition_and_micro['Iodine diff'] = nutrition_and_micro['Iodine'] - 150
+    nutrition_and_micro['Calcium diff'] = nutrition_and_micro['Calcium'] - 1200
+    micronutrient_list = ['Vitamin B3', 'Zinc', 'Vitamin E',
+       'Vitamin D', 'Vitamin C', 'Vitamin B6', 'Vitamin A',
+       'Selenium', 'Magnesium', 'Iron', 'Iodine', 'Calcium']
+    micro_option = st.selectbox("Choose a micronutrient", micronutrient_list)
+    for element in micronutrient_list:
+        if micro_option == element:
+            fig_micro = px.scatter(
+                nutrition_and_micro, x='Excess deaths', y=element, opacity=0.65,
+                trendline='ols', trendline_color_override='darkblue'
+            )
+            fig_nutrient_death.update_layout(
+            title='Excess Deaths and Difference between Micronutrient Intake and Recommended Amount across the world',
+            xaxis=dict(
+                title='Excess deaths (log)',
+                showgrid=False, type='log'
+            ), yaxis=dict(title='Micronutrient Level', showgrid=False)
+            )
+            st.plotly_chart(fig_nutrient_death, height=800, width=800)
+
+
+
+
+
+
 
 
 
