@@ -114,8 +114,7 @@ with st.echo(code_location="below"):
         fig_obesity.update_traces(textfont_size=12, textangle=0
                                    , textposition="outside", cliponaxis=False,
                                    xaxis=dict(
-                                       title='Country',
-                                       showgrid=False,
+                                       title='Country'
                                    ), yaxis=dict(title='Obesity Rate (%)', showgrid=False))
         fig_obesity.update_yaxes(range=[0, 100])
         st.plotly_chart(fig_obesity, width=800, height=800)
@@ -127,8 +126,7 @@ with st.echo(code_location="below"):
         fig_obesity2.update_traces(textfont_size=12, textangle=0
                                    , textposition="outside", cliponaxis=False,
                                    xaxis=dict(
-                    title='Country',
-                    showgrid=False,
+                    title='Country'
                 ), yaxis=dict(title='Obesity Rate (%)', showgrid=False))
         fig_obesity2.update_yaxes(range=[0, 100])
 
