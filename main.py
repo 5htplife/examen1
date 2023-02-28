@@ -129,11 +129,13 @@ with st.echo(code_location="below"):
 
     st.write(
         "The chart above prompts us to suspect that women in general are more prone to obesity than men.")
-    st.write("The average obesity rate for women around the world is", np.mean(obesity_female['Value']), "%.")
-    st.write("The average obesity rate for men around the world is", np.mean(obesity_male['Value']), "%.")
-    st.write("The natural question that occurs is: what to eat to prevent obesity?")
+    st.write('The average obesity rate for women around the world is {:.2f}'.format(obesity_female['Value']), "%.")
+    st.write('The average obesity rate for men around the world is {:.2f}'.format(obesity_male['Value']), "%.")
+
+    st.write("Obviously women suffer from obesity more frequently than men do.")
+    st.write("The natural question that occurs is: how to prevent obesity?")
     st.write(
-        "This is the question that a lot of medical scientists are concerned wit, and our project certainly can't offer any certain answer to it. ")
+        "This is the question that a lot of medical scientists are concerned with, and our project certainly can't offer a  fully certain answer to it. ")
     st.write(
         "Yet, what we can do is analyze food habits across countries and obesity rates. We have run the regression on obesity level and different food types.")
     st.write(
