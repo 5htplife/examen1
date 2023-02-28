@@ -129,8 +129,8 @@ with st.echo(code_location="below"):
 
     st.write(
         "The chart above prompts us to suspect that women in general are more prone to obesity than men.")
-    st.write('The average obesity rate for women around the world is {:.2f}'.format(obesity_female['Value']), "%.")
-    st.write('The average obesity rate for men around the world is {:.2f}'.format(obesity_male['Value']), "%.")
+    st.write('The average obesity rate for women around the world is {:.2f}'.format(obesity_female['Value'].mean()), "%.")
+    st.write('The average obesity rate for men around the world is {:.2f}'.format(obesity_male['Value'].mean()), "%.")
 
     st.write("Obviously women suffer from obesity more frequently than men do.")
     st.write("The natural question that occurs is: how to prevent obesity?")
