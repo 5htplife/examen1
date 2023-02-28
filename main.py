@@ -311,21 +311,25 @@ with st.echo(code_location="below"):
     micronutrient_list = ['Vitamin B3', 'Zinc', 'Vitamin E',
        'Vitamin D', 'Vitamin C', 'Vitamin B6', 'Vitamin A',
        'Selenium', 'Magnesium', 'Iron', 'Iodine', 'Calcium']
+    micronutrient_list_diff = ['Vitamin B3 diff', 'Zinc diff', 'Vitamin E diff',
+                          'Vitamin D diff', 'Vitamin C diff', 'Vitamin B6 diff', 'Vitamin A diff',
+                          'Selenium diff', 'Magnesium diff', 'Iron diff', 'Iodine diff', 'Calcium diff']
     micro_option = st.selectbox("Choose a micronutrient", micronutrient_list)
-    for element in micronutrient_list:
-        if micro_option == element:
-            fig_micro = px.scatter(
-                nutrition_and_micro, x='Excess deaths', y=element, opacity=0.65,
-                trendline='ols', trendline_color_override='darkblue'
-            )
-            fig_nutrient_death.update_layout(
-            title='Excess Deaths and Difference between Micronutrient Intake and Recommended Amount across the world',
-            xaxis=dict(
-                title='Excess deaths (log)',
-                showgrid=False, type='log'
-            ), yaxis=dict(title='Micronutrient Level', showgrid=False)
-            )
-            st.plotly_chart(fig_nutrient_death, height=800, width=800)
+    for element in micronutrient_list_diff:
+        for j in micronutrient_list:
+            if micro_option == j:
+                fig_micro = px.scatter(
+                    nutrition_and_micro, x='Excess deaths', y=element, opacity=0.65,
+                    trendline='ols', trendline_color_override='darkblue'
+                )
+                fig_nutrient_death.update_layout(
+                title='Excess Deaths and Difference between Micronutrient Intake and Recommended Amount across the world',
+                xaxis=dict(
+                    title='Excess deaths (log)',
+                    showgrid=False, type='log'
+                ), yaxis=dict(title='Micronutrient Level', showgrid=False)
+                )
+                st.plotly_chart(fig_nutrient_death, height=800, width=800)
 
 
 
