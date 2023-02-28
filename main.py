@@ -193,7 +193,7 @@ with st.echo(code_location="below"):
     for element in macronutrients:
         if macro_option == element:
             correlation_macro = stats.pearsonr(nutrition_macro_female[element], nutrition_macro_female['Value'])[0]
-            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
+            st.write('Correlation between obesity and this macronutrient is {:.2f}.'.format(correlation_macro))
 
     macronutrients2 = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat',
                        'Seafood omega-3 fat',
