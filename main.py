@@ -110,10 +110,10 @@ with st.echo(code_location="below"):
     if gender_option == 'Female':
         fig_obesity = px.bar(obesity_female, y="Value", x="Country Name",
                                      hover_name="Country Name",
-                                     text_auto='.2s', title="Obesity rates among women in top-10 obesed countries")
+                                     text_auto='.2s%', title="Obesity rates among women in top-10 obesed countries")
         fig_obesity.update_traces(textfont_size=12, textangle=0
                                    , textposition="outside", cliponaxis=False)
-        fig_obesity.update_yaxes(range=[0, 100])
+        fig_obesity.update_yaxes(range=[0, 100], title = "Obesity Rate (%)")
         st.plotly_chart(fig_obesity, width=800, height=800)
 
     else:
@@ -122,7 +122,7 @@ with st.echo(code_location="below"):
                                      text_auto='.2s', title="Obesity rates among men in top-10 obesed countries")
         fig_obesity2.update_traces(textfont_size=12, textangle=0
                                    , textposition="outside", cliponaxis=False)
-        fig_obesity2.update_yaxes(range=[0, 100])
+        fig_obesity2.update_yaxes(range=[0, 100], title = "Obesity Rate (%)")
 
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
