@@ -168,13 +168,14 @@ with st.echo(code_location="below"):
             correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0]
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
-    st.write('Besides, it may be interesting to look at the relationship between macronutrients and obesity.')
+    st.write("As you can notice the relationship between most foods and obesity is really weak. From OLS regression we see that indeed women are suffering from obesity way more. Interestingly, dairy products are positively correlated but considering this [link](https://www.sciencedirect.com/science/article/abs/pii/S1047279716303398) meta-analysis it may not hold true. There are no studies that support a positive relationship between egg consumption and obesity either. However, we still can get useful insights: as for fruit juice consumption, see this [link](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2012.300719) which supports the results. Also, nnon-starchy veggies, whole grains as well as coffee are well known for their anti-obesity effects. See: this [link] (https://link.springer.com/article/10.1007/s00394-016-1206-0) for coffee, this [link](https://academic.oup.com/ajcn/article/98/2/594/4577408) for whole grains, for instance.")
+    st.write("Now, let's look at the relationship between macronutrients and obesity.")
     nutrition_macro = get_macronutrition_and_obesity()
     macronutrients = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat',
                       'Seafood omega-3 fat',
                       'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
                       'Total protein', 'Total carbohydrates']
-    st.write("The analysis below is performed based on female values around the world:")
+    st.write("The analysis below is performed based on female data around the world:")
     macro_option = st.selectbox("Choose a macronutrient", macronutrients)
     nutrition_macro_female = nutrition_macro[nutrition_macro['female'] == 1]
     for element in macronutrients:
@@ -189,7 +190,11 @@ with st.echo(code_location="below"):
                 ), yaxis=dict(title='Macronutrient Level', showgrid=False)
             )
             st.plotly_chart(fig_macronutrient, height=800, width=800)
-    st.write("For men around the world:")
+    for element in macronutrients:
+        if macro_option == element:
+            correlation_macro = stats.pearsonr(nutrition_macro_female[element], nutrition_macro_female['Value'])[0]
+            st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
+
     macronutrients2 = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat',
                        'Seafood omega-3 fat',
                        'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
