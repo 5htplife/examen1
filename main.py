@@ -112,10 +112,7 @@ with st.echo(code_location="below"):
                                      hover_name="Country Name",
                                      text_auto='.2s', title="Obesity rates among women in top-10 obesed countries")
         fig_obesity.update_traces(textfont_size=12, textangle=0
-                                   , textposition="outside", cliponaxis=False,
-                                   xaxis=dict(
-                                       title='Country'
-                                   ), yaxis=dict(title='Obesity Rate (%)', showgrid=False))
+                                   , textposition="outside", cliponaxis=False)
         fig_obesity.update_yaxes(range=[0, 100])
         st.plotly_chart(fig_obesity, width=800, height=800)
 
@@ -124,10 +121,7 @@ with st.echo(code_location="below"):
                                      hover_name="Country Name",
                                      text_auto='.2s', title="Obesity rates among men in top-10 obesed countries")
         fig_obesity2.update_traces(textfont_size=12, textangle=0
-                                   , textposition="outside", cliponaxis=False,
-                                   xaxis=dict(
-                    title='Country'
-                ), yaxis=dict(title='Obesity Rate (%)', showgrid=False))
+                                   , textposition="outside", cliponaxis=False)
         fig_obesity2.update_yaxes(range=[0, 100])
 
         st.plotly_chart(fig_obesity2, width=800, height=800)
