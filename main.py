@@ -128,7 +128,9 @@ with st.echo(code_location="below"):
         st.plotly_chart(fig_obesity2, width=800, height=800)
 
     st.write(
-        "Obesity is a serious problem nowadays. From the plot above you can see that it wasn't as drastic even half a century ago.")
+        "The chart above prompts us to suspect that women in general are more prone to obesity than men.")
+    st.write("The average obesity rate for women around the world is", np.mean(obesity_female['Value']), "%.")
+    st.write("The average obesity rate for men around the world is", np.mean(obesity_male['Value']), "%.")
     st.write("The natural question that occurs is: what to eat to prevent obesity?")
     st.write(
         "This is the question that a lot of medical scientists are concerned wit, and our project certainly can't offer any certain answer to it. ")
