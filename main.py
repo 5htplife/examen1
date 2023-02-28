@@ -316,7 +316,7 @@ with st.echo(code_location="below"):
                           'Selenium diff', 'Magnesium diff', 'Iron diff', 'Iodine diff', 'Calcium diff']
     micro_option = st.selectbox("Choose a micronutrient", micronutrient_list_diff)
     for element in micronutrient_list_diff:
-        if micro_option == j:
+        if micro_option == element:
             fig_micro = px.scatter(
                     nutrition_and_micro, x='Excess deaths', y=element, opacity=0.65,
                     trendline='ols', trendline_color_override='darkblue'
