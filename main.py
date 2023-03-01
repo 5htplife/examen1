@@ -17,7 +17,7 @@ import statsmodels
 
 @st.cache(allow_output_mutation=True)
 def get_excess_mortality():
-return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
+    return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/excess_mortality.csv")
 @st.cache(allow_output_mutation=True)
 def get_nutrition_percent():
     return pd.read_csv("https://github.com/5htplife/dataforexamen1/raw/main/nutrition_percent.csv")
@@ -51,10 +51,10 @@ st.set_page_config(
 )
 st.sidebar.markdown('''
 # Contents
-- [Analysis of Food Habits](#covid-situation-in-the-world)
-- [Obesity](#obesity-and-coronavirus)
-- [COVID-19](#obesity-and-food-habits)
-- [Micronutrients and COVID-19]
+- [Analysis of Food Habits](# Food Habits)
+- [Obesity](# Obesity)
+- [COVID-19](# COVID-19)
+- [Micronutrients and COVID-19] (# Dietary Habits and COVID-19)
 ''', unsafe_allow_html=True)
 excess_mortality = get_excess_mortality() #access data
 
@@ -219,8 +219,6 @@ st.write("We see that such nutrients as saturated fats and added sugars are posi
 
 st.write("### COVID-19")
 
-
-
 st.write("COVID-19 started in the early 2020 and spread rapidly across the globe. We obtain information on the COVID-19 status in 170 countries relevant in the middle of 2021. The 2021 was the pinnacle of COVID-19 with Delta variant, the last potent mutation, peaking exactly in the middle of 2021.")
 st.write("The map shows excess mortality across 122 countries using data obtained by Karlinsky & Kobak (2021).")
 st.write("The countries that are singled out are the ones that have the largest number of excess deaths.")
@@ -267,7 +265,7 @@ else:
 
 st.write("Interesting, although not surprising observation from the chart above is that the highest undercount ratio is in the less developed countries such as Tajikistan, Nicaragua, and Uzbekistan.")
 
-st.write("## Dietary Habits and COVID-19")
+st.write("### Dietary Habits and COVID-19")
 
 st.write("The last step is to analyze whether there is any link with how people and the excess mortality in the country. Doing so, we focus solely on excess deaths.")
 st.write("Although regression analysis with food types didn't produce any robust results, it is still worth looking at some data.")
