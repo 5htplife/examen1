@@ -42,7 +42,7 @@ with st.echo(code_location="below"):
     @st.cache(allow_output_mutation=True)
     def get_obesity_dynamic():
         return pd.read_csv("")
-
+#the code above will help us not overload streamlit and we will access data when it is actually needed
 
     st.set_page_config(
         page_title="Food Habits, Obesity, and COVID-19",
@@ -56,7 +56,7 @@ with st.echo(code_location="below"):
     - [COVID-19](#obesity-and-food-habits)
     - [Micronutrients and COVID-19]
     ''', unsafe_allow_html=True)
-    excess_mortality = get_excess_mortality()
+    excess_mortality = get_excess_mortality() #access data
 
     st.markdown('# Food Habits')
     st.write("Today more and more attention is brought to what people should eat for general health and longevity (see this [link](https://www.youtube.com/watch?v=n9IxomBusuw)).")
@@ -64,9 +64,9 @@ with st.echo(code_location="below"):
     st.write("This project aims to offer insights about dietary habits to incentivize people maintain health. Also, we provide information about COVID-19 to see how the situation differs across countries. ")
     st.write("## Dietary Habits arounnd the World")
     st.write('We obtain data from Global Dietary Database where dietary patterns of 185 countries are listed. First, we offer insights in the consumption of certain types of food by country. It is interesting to learn what food types people prefer across the globe.')
-    nutrition_percent = get_nutrition_percent()
-    iso = get_iso()
-    nutrition_percent = nutrition_percent.merge(iso, how='inner', left_on='iso3', right_on='iso3c')
+    nutrition_percent = get_nutrition_percent() #access data
+    iso = get_iso() #access data
+    nutrition_percent = nutrition_percent.merge(iso, how='inner', left_on='iso3', right_on='iso3c') #get the country codes to correctly plot the data on the map
     countries = nutrition_percent['country_name'].astype(str)
     country_options = st.selectbox('Choose a country', countries)
     per_country_habits = nutrition_percent[nutrition_percent['country_name'] == country_options]
@@ -95,20 +95,20 @@ with st.echo(code_location="below"):
 
     gender_option = st.selectbox('Choose gender:', ['Female', 'Male'])
 
-    obesity = get_obesity_data()
+    obesity = get_obesity_data() #access data
     obesity['Indicator Name'] = np.where(
         (obesity['Indicator Name'] == 'Prevalence of obesity, female (% of female population ages 18+)'), 'Female',
-        obesity['Indicator Name'])
+        obesity['Indicator Name']) #convert categorical variable into a dummy
     obesity['Indicator Name'] = np.where(
         (obesity['Indicator Name'] == 'Prevalence of obesity, male (% of male population ages 18+)'), 'Male',
-        obesity['Indicator Name'])
+        obesity['Indicator Name']) #convert categorical variable into a dummy
     obesity = obesity.drop(columns=['Indicator Code', 'Disaggregation'])
-    obesity = obesity[obesity['Country Name'] != 'World']
-    obesity = obesity[obesity['Year'] == 2016]
+    obesity = obesity[obesity['Country Name'] != 'World'] #we need solely data by country (not total)
+    obesity = obesity[obesity['Year'] == 2016] #we are concerned with the recent date
     obesity_female = obesity[obesity['Indicator Name'] == 'Female']
-    obesity_female10 = obesity_female.sort_values(by = 'Value', ascending = False)[:10]
+    obesity_female10 = obesity_female.sort_values(by = 'Value', ascending = False)[:10] #take the data with 10 highest obesity rates
     obesity_male = obesity[obesity['Indicator Name'] == 'Male']
-    obesity_male10 = obesity_male.sort_values(by='Value', ascending=False)[:10]
+    obesity_male10 = obesity_male.sort_values(by='Value', ascending=False)[:10] #take the data with 10 highest obesity rates
     if gender_option == 'Female':
         fig_obesity = px.bar(obesity_female10, y="Value", x="Country Name",
                                      hover_name="Country Name",
@@ -148,8 +148,7 @@ with st.echo(code_location="below"):
     st.write("We can have a closer look on the relationship between each food type and obesity.")
     nutrition_obesity = get_nutrition_obesity_by_gender()
 
-
-    def function_for_food_plots(A):
+    def function_for_food_plots(A): #this function creates a universal regression plot for every product
         fig6, ax6 = plt.subplots()
         sns.regplot(data=nutrition_obesity, x='Value', y=A, color='blue', marker='*', ax=ax6)
         ax6.set(xlabel='Obesity (%)')
@@ -166,12 +165,12 @@ with st.echo(code_location="below"):
     for element in list_of_products:
         if food_options == element:
             function_for_food_plots(element)
-            correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0]
+            correlation_food = stats.pearsonr(nutrition_obesity[element], nutrition_obesity['Value'])[0] #calculate the correlation
             st.write('Correlation between obesity and this type of food is {:.2f}.'.format(correlation_food))
 
     st.write("As you can notice the relationship between most foods and obesity is really weak. From OLS regression we see that indeed women are suffering from obesity way more. Interestingly, dairy products are positively correlated but considering this [link](https://www.sciencedirect.com/science/article/abs/pii/S1047279716303398) meta-analysis it may not hold true. There are no studies that support a positive relationship between egg consumption and obesity either. However, we still can get useful insights: as for fruit juice consumption, see this [link](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2012.300719) which supports the results. Also, nnon-starchy veggies, whole grains as well as coffee are well known for their anti-obesity effects. See: this [link] (https://link.springer.com/article/10.1007/s00394-016-1206-0) for coffee, this [link](https://academic.oup.com/ajcn/article/98/2/594/4577408) for whole grains, for instance.")
     st.write("Now, let's look at the relationship between macronutrients and obesity.")
-    nutrition_macro = get_macronutrition_and_obesity()
+    nutrition_macro = get_macronutrition_and_obesity() #access data
     macronutrients = ['Added sugars', 'Dietary fiber', 'Dietary cholesterol', 'Plant omega-3 fat',
                       'Seafood omega-3 fat',
                       'Total omega-6 fat', 'Monounsaturated fatty acids', 'Saturated fat',
@@ -226,14 +225,14 @@ with st.echo(code_location="below"):
     st.write("The map shows excess mortality across 122 countries using data obtained by Karlinsky & Kobak (2021).")
     st.write("The countries that are singled out are the ones that have the largest number of excess deaths.")
     excess_mortality['size'] = excess_mortality['Excess deaths']
-    excess_mortality.loc[excess_mortality['size'] < 0, 'size'] = 1
+    excess_mortality.loc[excess_mortality['size'] < 0, 'size'] = 1 #we need to get all excess deaths positive in order to plot it
     fig_general = px.scatter_geo(excess_mortality, locations='iso3c', color='Country',
                          hover_name='Country',
                          hover_data=['Country', 'COVID-19 deaths', 'Excess deaths', 'Excess per 100k'], size='size',
                          projection='natural earth', title='COVID-19 Excess Mortality around the Globe')
     fig_general.update_layout(width=800,height=800)
     st.plotly_chart(fig_general, width=800,height=800)
-    excess_mortality.sort_values(by=['Excess deaths'], ascending=False)
+    excess_mortality.sort_values(by=['Excess deaths'], ascending=False) #here we look for the greatest number of excess deaths by country
     st.write("Top-5 countries with the greatest number of excess deaths are the US, Russia, Brazil, Mexico, and Egypt.")
     st.write("In our further discussion, we will have a closer look at 3 countries among top-5: the US, Russia, and Mexico.")
     st.write("We can also have a look at other measures such as confirmed COVID-19 deaths, excess deaths per 100'000 people, and undercount ratio (the ratio between excess deaths and confirmed deaths).")
@@ -279,7 +278,7 @@ with st.echo(code_location="below"):
        'Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin B6', 'Vitamin A',
        'Selenium', 'Potassium', 'Magnesium', 'Iron', 'Iodine', 'Calcium']
     supplement_option = st.selectbox("Choose a micronutrient", micronutrients)
-    nutrition_and_covid = get_nutrition_and_covid()
+    nutrition_and_covid = get_nutrition_and_covid() #access data
     for element in micronutrients:
         if supplement_option == element:
             fig_nutrient_death = px.scatter(nutrition_and_covid, x = 'Excess deaths', y = element,
@@ -293,7 +292,7 @@ with st.echo(code_location="below"):
             st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
     st.write("Note that added sugars and saturated fats are positively linked with COVID-19 deaths which looks plausible.")
     st.write("I hope this project gave you interesting insights on food habits, obesity, and COVID-19. If it didn't encourage you to eat heathily, I hope you at least enjoyed the plots:)")
-
+    #note that there was a lot of data preprocessing in Jupyter Notebook before using the above data
 
 
 
