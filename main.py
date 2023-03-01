@@ -271,7 +271,7 @@ with st.echo(code_location="below"):
     st.write("## Dietary Habits and COVID-19")
 
     st.write("The last step is to analyze whether there is any link with how people and the excess mortality in the country. Doing so, we focus solely on excess deaths.")
-    st.write("Although regression analysis didn't produce any robust results, it is still worth looking at some data.")
+    st.write("Although regression analysis with food types didn't produce any robust results, it is still worth looking at some data.")
     st.write("It is interesting to see how micronutrient distribution and excess mortality are related in different countries. During COVID outbreak many doctors advised patients to take supplements such as vitamin C, vitamin B12, vitamin D, and zinc. There is anecdotal evidence that these supplements help immune system during COVID.")
     st.write("That is why we present a scatterplot with micronutrient values and excess mortality in the world")
     micronutrients = ['Vitamin B9',
@@ -291,44 +291,9 @@ with st.echo(code_location="below"):
                                              ), yaxis = dict(title='Micronutrient Level', showgrid = False)
                                              )
             st.plotly_chart(fig_nutrient_death, height = 800, width = 800)
+    st.write("Note that added sugars and saturated fats are positively linked with COVID-19 deaths which looks plausible.")
+    st.write("I hope this project gave you interesting insights on food habits, obesity, and COVID-19. If it didn't encourage you to eat heathily, I hope you at least enjoyed the plots:)")
 
-    st.write("Finally, let's look at whether in the countries with the biggest excess mortality people lack certain elements.")
-    nutrition_and_micro = nutrition_and_covid[['Vitamin B3', 'Zinc', 'Vitamin E',
-       'Vitamin D', 'Vitamin C', 'Vitamin B6', 'Vitamin A',
-       'Selenium', 'Magnesium', 'Iron', 'Iodine', 'Calcium', 'Excess deaths']]
-    nutrition_and_micro['Vitamin B3 diff'] = nutrition_and_micro['Vitamin B3'] - 15
-    nutrition_and_micro['Zinc diff'] = nutrition_and_micro['Zinc'] - 10
-    nutrition_and_micro['Vitamin E diff'] = nutrition_and_micro['Vitamin E'] - 15
-    nutrition_and_micro['Vitamin D diff'] = nutrition_and_micro['Vitamin D'] - 15
-    nutrition_and_micro['Vitamin C diff'] = nutrition_and_micro['Vitamin C'] - 85
-    nutrition_and_micro['Vitamin B6 diff'] = nutrition_and_micro['Vitamin B6'] - 1.3
-    nutrition_and_micro['Vitamin A diff'] = nutrition_and_micro['Vitamin A'] - 800
-    nutrition_and_micro['Selenium diff'] = nutrition_and_micro['Selenium'] - 55
-    nutrition_and_micro['Magnesium diff'] = nutrition_and_micro['Magnesium'] - 5
-    nutrition_and_micro['Iron diff'] = nutrition_and_micro['Iron'] - 13
-    nutrition_and_micro['Iodine diff'] = nutrition_and_micro['Iodine'] - 150
-    nutrition_and_micro['Calcium diff'] = nutrition_and_micro['Calcium'] - 1200
-    micronutrient_list = ['Vitamin B3', 'Zinc', 'Vitamin E',
-       'Vitamin D', 'Vitamin C', 'Vitamin B6', 'Vitamin A',
-       'Selenium', 'Magnesium', 'Iron', 'Iodine', 'Calcium']
-    micronutrient_list_diff = ['Vitamin B3 diff', 'Zinc diff', 'Vitamin E diff',
-                          'Vitamin D diff', 'Vitamin C diff', 'Vitamin B6 diff', 'Vitamin A diff',
-                          'Selenium diff', 'Magnesium diff', 'Iron diff', 'Iodine diff', 'Calcium diff']
-    micro_option = st.selectbox("Choose a micronutrient", micronutrient_list_diff)
-    for element in micronutrient_list_diff:
-        if micro_option == element:
-            fig_micro = px.scatter(
-                    nutrition_and_micro, x='Excess deaths', y=element, opacity=0.65,
-                    trendline='ols', trendline_color_override='darkblue'
-                )
-            fig_nutrient_death.update_layout(
-                title='Excess Deaths and Difference between Micronutrient Intake and Recommended Amount across the world',
-                xaxis=dict(
-                    title='Excess deaths (log)',
-                    showgrid=False, type='log'
-                ), yaxis=dict(title='Micronutrient Level', showgrid=False)
-                )
-            st.plotly_chart(fig_nutrient_death, height=800, width=800)
 
 
 
