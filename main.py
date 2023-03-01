@@ -51,10 +51,10 @@ st.set_page_config(
 )
 st.sidebar.markdown('''
 # Contents
-- [Analysis of Food Habits](# Food Habits)
-- [Obesity](# Obesity)
-- [COVID-19](# COVID-19)
-- [Micronutrients and COVID-19] (# Dietary Habits and COVID-19)
+- [Analysis of Food Habits](#food-habits)
+- [Obesity](#obesity)
+- [COVID-19](#covid19)
+- [Micronutrients and COVID-19] (#dietaryhabitscovid19)
 ''', unsafe_allow_html=True)
 excess_mortality = get_excess_mortality() #access data
 
